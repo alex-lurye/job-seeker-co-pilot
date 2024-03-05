@@ -10,14 +10,34 @@ from flask_cors import CORS
 
 from .routes import rest_api
 from .models import db
+from .models import Country
+import pycountry
 
 app = Flask(__name__)
 
 app.config.from_object('api.config.BaseConfig')
 
+from flask_migrate import Migrate
+
+migrate = Migrate(app, db)
+
+
 db.init_app(app)
 rest_api.init_app(app)
 CORS(app)
+
+def seed_countries():
+    Country.query.delete()
+
+    for country in pycountry.countries:
+        new_country = Country(
+            name=country.name,
+            iso_alpha2=country.alpha_2,
+            iso_alpha3=country.alpha_3
+        )
+        db.session.add(new_country)
+
+    db.session.commit()
 
 # Setup database
 @app.before_first_request
@@ -53,3 +73,11 @@ def after_request(response):
             response.set_data(json.dumps(response_data))
         response.headers.add('Content-Type', 'application/json')
     return response
+
+@app.cli.command("seed_db")
+def seed_db():
+    """Seeds the database with initial data."""
+    seed_countries()  # Assuming seed_countries is accessible/imported
+
+if __name__ == '__main__':
+    app.run()

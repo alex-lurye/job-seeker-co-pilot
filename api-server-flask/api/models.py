@@ -12,31 +12,39 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+class Country(db.Model):
+    name = db.Column(db.String(255), nullable=False)
+    iso_alpha2 = db.Column(db.String(2), nullable=False, unique=True, primary_key=True)
+    iso_alpha3 = db.Column(db.String(3), nullable=False, unique=True)
+    currency_code = db.Column(db.String(3))  # Optional
+    phone_code = db.Column(db.String(15))  # Optional
+    def __repr__(self):
+        return f'<Country {self.name}>'
+
 class Experience(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     company = db.Column(db.String(64), nullable=False)
+    country_iso2  = db.Column(db.String(2), db.ForeignKey('country.iso_alpha2'), nullable=False)
     start_year = db.Column(db.Integer, nullable=False)
     end_year = db.Column(db.Integer, nullable=True)  # nullable for ongoing roles
     position_title = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    user = db.relationship('Users', backref=db.backref('experiences', lazy=True))
 
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     institution = db.Column(db.String(64), nullable=False)
+    country_iso2  = db.Column(db.String(2), db.ForeignKey('country.iso_alpha2'), nullable=False)
     start_year = db.Column(db.Integer, nullable=False)
     end_year = db.Column(db.Integer, nullable=True)  # nullable for ongoing education
     field_of_study = db.Column(db.String(64), nullable=False)
     additional_info = db.Column(db.Text, nullable=True)
-    user = db.relationship('Users', backref=db.backref('educations', lazy=True))
 
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     description = db.Column(db.Text, nullable=False)
-    user = db.relationship('Users', backref=db.backref('skills', lazy=True))
 
 class Certification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -44,7 +52,6 @@ class Certification(db.Model):
     name = db.Column(db.String(128), nullable=False)
     issuer = db.Column(db.String(64), nullable=False)
     date_issued = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    user = db.relationship('Users', backref=db.backref('certifications', lazy=True))
 
 class Users(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
