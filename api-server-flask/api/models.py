@@ -31,6 +31,16 @@ class Experience(db.Model):
     position_title = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text, nullable=False)
 
+    def to_dict(self):
+        return {
+            'company': self.company,
+            'country_iso2': self.country_iso2,
+            'start_year': self.start_year,
+            'end_year': self.end_year,
+            'position_title': self.position_title,
+            'description': self.description
+        }
+
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -40,6 +50,16 @@ class Education(db.Model):
     end_year = db.Column(db.Integer, nullable=True)  # nullable for ongoing education
     field_of_study = db.Column(db.String(64), nullable=False)
     additional_info = db.Column(db.Text, nullable=True)
+
+    def to_dict(self):
+        return {
+            'institution': self.institution,
+            'country_iso2': self.country_iso2,
+            'start_year': self.start_year,
+            'end_year': self.end_year,
+            'field_of_study': self.field_of_study,
+            'additional_info': self.additional_info
+        }
 
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)

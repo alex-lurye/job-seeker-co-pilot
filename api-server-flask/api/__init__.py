@@ -5,8 +5,8 @@ Copyright (c) 2019 - present AppSeed.us
 
 import os, json
 
-from flask import Flask
-from flask_cors import CORS
+from flask import Flask, request
+from flask_cors import CORS, cross_origin
 
 from .routes import rest_api
 from .models import db
@@ -14,17 +14,19 @@ from .models import Country
 import pycountry
 
 app = Flask(__name__)
+CORS(app)
 
 app.config.from_object('api.config.BaseConfig')
 
 from flask_migrate import Migrate
 
-migrate = Migrate(app, db)
-
-
+app.config['DEBUG'] = True
 db.init_app(app)
+migrate = Migrate(app, db)
 rest_api.init_app(app)
-CORS(app)
+
+
+
 
 def seed_countries():
     Country.query.delete()
@@ -74,10 +76,19 @@ def after_request(response):
         response.headers.add('Content-Type', 'application/json')
     return response
 
+@app.before_request
+def log_request_info():
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.get_data(as_text=True))
+    # If you expect JSON and want to log it as a dictionary:
+    if request.is_json:
+        app.logger.debug('JSON: %s', json.dumps(request.get_json()))
+
+
 @app.cli.command("seed_db")
 def seed_db():
     """Seeds the database with initial data."""
     seed_countries()  # Assuming seed_countries is accessible/imported
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
