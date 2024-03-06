@@ -67,13 +67,13 @@ def token_required(f):
             token_expired = db.session.query(JWTTokenBlocklist.id).filter_by(jwt_token=token).scalar()
 
             if token_expired is not None:
-                return {"success": False, "msg": "Token revoked."}, 400
+                return {"success": False, "msg": "Token revoked."}, 403
 
             if not current_user.check_jwt_auth_active():
-                return {"success": False, "msg": "Token expired."}, 400
+                return {"success": False, "msg": "Token expired."}, 403
 
         except:
-            return {"success": False, "msg": "Token is invalid"}, 400
+            return {"success": False, "msg": "Token is invalid"}, 401
 
         return f(current_user, *args, **kwargs)
 
@@ -250,17 +250,21 @@ class SettingsSaver(Resource):
 
         print(request.get_json())
 
-        self.experiences = []
+        Experience.query.filter_by(user_id=self.id).delete()  # Delete old experiences
+        Education.query.filter_by(user_id=self.id).delete() 
+        Skill.query.filter_by(user_id=self.id).delete()
+        db.session.commit()  # Commit the deletion
+
+
         for exp_data in req_data.get('experiences', []):
-            new_exp = Experience(**exp_data)
+            new_exp = Experience(**exp_data, user_id = self.id)
+            db.session.add(new_exp)
             self.experiences.append(new_exp)
 
-        self.educations = []
         for edu_data in req_data.get('educations', []):
-            new_edu = Education(**edu_data)
+            new_edu = Education(**edu_data, user_id = self.id)
+            db.session.add(new_edu)
             self.educations.append(new_edu)
-
-        self.skills = []
 
         new_skills = Skill(description=req_data.get('skill'))
         self.skills.append(new_skills)

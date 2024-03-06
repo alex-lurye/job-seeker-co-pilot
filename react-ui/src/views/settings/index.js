@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // project imports
 import MainCard from '../../ui-component/cards/MainCard';
@@ -17,6 +17,7 @@ import countries from 'i18n-iso-countries';
 import axios from 'axios';
 
 import configData from '../../config';
+import { LOGOUT } from './../../store/actions';
 
 // Import the English language (or any other languages you need)
 import english from 'i18n-iso-countries/langs/en.json';
@@ -109,6 +110,8 @@ function Settings() {
       issuer: '',
       dateIssued: '',
     }]);
+
+    const dispatcher = useDispatch();
     // Fetch initial data
     useEffect(() => {
         const fetchData = async () => {
@@ -122,13 +125,19 @@ function Settings() {
                 setSkill(data.skill || '');
                 setCertifications(data.certifications || []);
             } catch (error) {
+                if(error.response){
+                    if(error.response.status === 401 || error.response.status === 403 ) {
+ 
+                        dispatcher({type: LOGOUT })
+                    }
+                }
                 console.error('Failed to fetch user settings:', error);
                 // Handle error appropriately
             }
         };
 
         fetchData();
-    }, []); // useEffect dependency array
+    }, [dispatcher]); // useEffect dependency array
 
     // Handle change for experiences
     const handleExperienceChange = (index, fieldName, fieldValue) => {
@@ -249,6 +258,12 @@ function Settings() {
                 .catch(function (error) {
                     setSubmissionSuccess(false);
                     setErrorMessage('The operation was not successful. Please try again.');
+                    if(error.response){
+                        if(error.response.status === 401 || error.response.status === 403 ) {
+     
+                            dispatcher({type: LOGOUT })
+                        }
+                    }
                 });
         } catch (err) {
             console.error(err);
@@ -341,61 +356,82 @@ function Settings() {
             </Grid>
                 {/* Education Form Inputs */}
                 <h3>Education</h3>
+                <Grid container spacing={2}>
                 {educations.map((education, index) => (
-                <SubCard style={{ marginBottom: '20px' }}>
-                    <TextField
-                        name="institution"
-                        value={education.institution}
-                        onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                        placeholder="Institution"
-                        style={{ display: 'block', margin: '10px 0' }}
-                    />
-                    <CountrySelector 
-                        value={education.country_iso2}
-                        onChange={(e) => { console.log(e); handleEducationCountryChange(index, e.value)}}
-                        placeholder="Select a country..."
-                    />
-                    <TextField
-                        name="start_year"
-                        type="number"
-                        value={education.start_year}
-                        onChange={(e) => handleEducationChange(index, 'start_year', e.target.value)}
-                        placeholder="Start Year"
-                        style={{ display: 'block', margin: '10px 0' }}
-                    />
-                    <TextField
-                        name="end_year"
-                        type="number"
-                        value={education.end_year}
-                        onChange={(e) => handleEducationChange(index, 'end_year', e.target.value)}
-                        placeholder="End Year (or leave blank if current)"
-                        style={{ display: 'block', margin: '10px 0' }}
-                    />
-                    <TextField
-                        name="field_of_study"
-                        value={education.field_of_study}
-                        onChange={(e) => handleEducationChange(index, 'field_of_study', e.target.value)}
-                        placeholder="Field of Study"
-                        style={{ display: 'block', margin: '10px 0' }}
-                    />
-                    <TextField
-                        name="additional_info"
-                        value={education.additional_info}
-                        onChange={(e) => handleEducationChange(index, 'additional_info', e.target.value)}
-                        placeholder="Additional Information"
-                        style={{ display: 'block', margin: '10px 0', width: '100%', height: '100px' }}
-                    />
-
-                    <IconButton type="button" aria-label="delete" onClick={() => removeEducation(index)}><DeleteIcon />
-                    </IconButton>
-                </SubCard>
+                    <Grid item xs={12} key={index}>
+                        <SubCard>
+                            <Grid container spacing={2} alignItems="flex-end">
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <TextField
+                                        name="institution"
+                                        value={education.institution}
+                                        onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                                        placeholder="Institution"
+                                        style={{ display: 'block', margin: '10px 0' }}
+                                    />
+                                </Grid>
+                                <Grid xs={12} sm={6} md={3}>
+                                    <CountrySelector 
+                                        value={education.country_iso2}
+                                        onChange={(e) => { console.log(e); handleEducationCountryChange(index, e.value)}}
+                                        placeholder="Select a country..."
+                                    />
+                                </Grid>
+                                <Grid item xs={6} md={2}>
+                                    <TextField
+                                        name="start_year"
+                                        type="number"
+                                        value={education.start_year}
+                                        onChange={(e) => handleEducationChange(index, 'start_year', e.target.value)}
+                                        placeholder="Start Year"
+                                        style={{ display: 'block', margin: '10px 0' }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6} md={2}>
+                                    <TextField
+                                        name="end_year"
+                                        type="number"
+                                        value={education.end_year}
+                                        onChange={(e) => handleEducationChange(index, 'end_year', e.target.value)}
+                                        placeholder="End Year (or leave blank if current)"
+                                        style={{ display: 'block', margin: '10px 0' }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        name="field_of_study"
+                                        value={education.field_of_study}
+                                        onChange={(e) => handleEducationChange(index, 'field_of_study', e.target.value)}
+                                        placeholder="Field of Study"
+                                        style={{ display: 'block', margin: '10px 0' }}
+                                    />
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        name="additional_info"
+                                        value={education.additional_info}
+                                        onChange={(e) => handleEducationChange(index, 'additional_info', e.target.value)}
+                                        placeholder="Additional Information"
+                                        style={{ display: 'block', margin: '10px 0', width: '100%', height: '100px' }}
+                                    />
+                                </Grid>
+                                <Grid item>
+                                    <IconButton type="button" aria-label="delete" onClick={() => removeEducation(index)}><DeleteIcon />
+                                    </IconButton>
+                                </Grid>
+                            </Grid>
+                        </SubCard>
+                    </Grid>
 
                 ))}
-                <Button 
-                startIcon={<AddCircleOutlineIcon />} 
-                onClick={addEducation}
-                variant="contained"
-                >Add Education</Button>
+                <Grid item xs={12}>
+                    <Button 
+                    startIcon={<AddCircleOutlineIcon />} 
+                    onClick={addEducation}
+                    variant="contained"
+                    >Add Education</Button>
+                </Grid>
+                </Grid>
                 {/* Skill Input */}
                 <h3>Skills</h3>
                 <TextField
