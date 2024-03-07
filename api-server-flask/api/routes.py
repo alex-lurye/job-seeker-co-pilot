@@ -266,7 +266,7 @@ class SettingsSaver(Resource):
             db.session.add(new_edu)
             self.educations.append(new_edu)
 
-        new_skills = Skill(description=req_data.get('skill'))
+        new_skills = Skill(description=req_data.get('skill'), user_id = self.id)
         self.skills.append(new_skills)
 
         self.save()
@@ -285,7 +285,7 @@ class SettingsSaver(Resource):
         user_details = {
             'experiences': [experience.to_dict() for experience in self.experiences],
             'educations': [education.to_dict() for education in self.educations],
-            'skills': self.skills[0].description if self.skills else '' 
+            'skill': self.skills[0].description if self.skills else '' 
         }
 
         return user_details, 200
