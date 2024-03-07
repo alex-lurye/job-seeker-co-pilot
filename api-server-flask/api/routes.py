@@ -6,13 +6,14 @@ Copyright (c) 2019 - present AppSeed.us
 from datetime import datetime, timezone, timedelta
 
 from functools import wraps
+from inspect import Traceback
 
-from flask import request
+from flask import Blueprint,request,jsonify
 from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import db, Users, JWTTokenBlocklist
+from .models import Education, Experience, Skill, db, Users, JWTTokenBlocklist
 from .config import BaseConfig
 import requests
 
@@ -66,13 +67,13 @@ def token_required(f):
             token_expired = db.session.query(JWTTokenBlocklist.id).filter_by(jwt_token=token).scalar()
 
             if token_expired is not None:
-                return {"success": False, "msg": "Token revoked."}, 400
+                return {"success": False, "msg": "Token revoked."}, 403
 
             if not current_user.check_jwt_auth_active():
-                return {"success": False, "msg": "Token expired."}, 400
+                return {"success": False, "msg": "Token expired."}, 403
 
         except:
-            return {"success": False, "msg": "Token is invalid"}, 400
+            return {"success": False, "msg": "Token is invalid"}, 401
 
         return f(current_user, *args, **kwargs)
 
@@ -82,8 +83,6 @@ def token_required(f):
 """
     Flask-Restx routes
 """
-
-
 @rest_api.route('/api/users/register')
 class Register(Resource):
     """
@@ -240,3 +239,53 @@ class GitHubLogin(Resource):
                     "username": user_json['username'],
                     "token": token,
                 }}, 200
+
+
+@rest_api.route('/api/settings')
+class SettingsSaver(Resource):
+    @token_required
+    def post(self, dumb):
+
+        req_data = request.get_json()
+
+        print(request.get_json())
+
+        Experience.query.filter_by(user_id=self.id).delete()  # Delete old experiences
+        Education.query.filter_by(user_id=self.id).delete() 
+        Skill.query.filter_by(user_id=self.id).delete()
+        db.session.commit()  # Commit the deletion
+
+
+        for exp_data in req_data.get('experiences', []):
+            new_exp = Experience(**exp_data, user_id = self.id)
+            db.session.add(new_exp)
+            self.experiences.append(new_exp)
+
+        for edu_data in req_data.get('educations', []):
+            new_edu = Education(**edu_data, user_id = self.id)
+            db.session.add(new_edu)
+            self.educations.append(new_edu)
+
+        new_skills = Skill(description=req_data.get('skill'), user_id = self.id)
+        self.skills.append(new_skills)
+
+        self.save()
+        '''user.experiences = req_data.get('experiences')
+        user.educations = data.get('educations')
+        user.skills = data.get('skills')
+        
+        db.session.commit() 
+        '''
+        return {"success": True,
+                }, 200
+    
+    @token_required
+    def get(self, dumb): 
+
+        user_details = {
+            'experiences': [experience.to_dict() for experience in self.experiences],
+            'educations': [education.to_dict() for education in self.educations],
+            'skill': self.skills[0].description if self.skills else '' 
+        }
+
+        return user_details, 200
