@@ -15,6 +15,14 @@ export const other = {
     type: 'group',
     children: [
         {
+            id: 'positions',
+            title: 'Positions',
+            type: 'item',
+            url: '/positions',
+            icon: icons['IconBrandChrome'],
+            breadcrumbs: false
+        },
+        {
             id: 'settings',
             title: 'Settings',
             type: 'item',

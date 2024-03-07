@@ -73,6 +73,24 @@ class Certification(db.Model):
     issuer = db.Column(db.String(64), nullable=False)
     date_issued = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+class Position(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    company = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(64), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    date_added = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+
+            'id': self.id,
+            'company': self.company,
+            'title': self.title,
+            'description': self.description,
+            'date': self.date_added.strftime('%Y-%m-%d %H:%M:%S'),
+        }
+
 class Users(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(32), nullable=False)
@@ -86,6 +104,7 @@ class Users(db.Model):
     educations = db.relationship('Education', backref='user', lazy=True)
     skills = db.relationship('Skill', backref='user', lazy=True)
     certifications = db.relationship('Certification', backref='user', lazy=True)
+    positions = db.relationship('Position', backref='user', lazy=True)
 
     def __repr__(self):
         return f"User {self.username}"
