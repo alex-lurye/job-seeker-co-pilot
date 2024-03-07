@@ -16,8 +16,13 @@ const UtilsShadow = Loadable(lazy(() => import('../views/utilities/Shadow')));
 const UtilsMaterialIcons = Loadable(lazy(() => import('../views/utilities/MaterialIcons')));
 const UtilsTablerIcons = Loadable(lazy(() => import('../views/utilities/TablerIcons')));
 
+//positions routing
+const PositionDetails = Loadable(lazy(() => import('../views/positions/PositionDetails')))
+const Positions = Loadable(lazy(() => import('../views/positions')));
+
 // settings routing
 const Settings = Loadable(lazy(() => import('../views/settings')));
+
 
 //-----------------------|| MAIN ROUTING ||-----------------------//
 
@@ -34,7 +39,8 @@ const MainRoutes = () => {
                 '/utils/util-shadow',
                 '/icons/tabler-icons',
                 '/icons/material-icons',
-
+                '/positions/:id',
+                '/positions',
                 '/settings'
             ]}
         >
@@ -48,7 +54,8 @@ const MainRoutes = () => {
                         <Route path="/utils/util-shadow" component={UtilsShadow} />
                         <Route path="/icons/tabler-icons" component={UtilsTablerIcons} />
                         <Route path="/icons/material-icons" component={UtilsMaterialIcons} />
-
+                        <Route path="/positions/:id" component={PositionDetails} />
+                        <Route path="/positions" component={Positions} />
                         <Route path="/settings" component={Settings} />
                     </AuthGuard>
                 </Switch>

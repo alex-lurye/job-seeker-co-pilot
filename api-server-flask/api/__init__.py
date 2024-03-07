@@ -17,6 +17,7 @@ app = Flask(__name__)
 CORS(app)
 
 app.config.from_object('api.config.BaseConfig')
+app.config['PROPAGATE_EXCEPTIONS'] = False
 
 from flask_migrate import Migrate
 
@@ -66,24 +67,24 @@ def after_request(response):
     """
        Sends back a custom error with {"success", "msg"} format
     """
-
     if int(response.status_code) >= 400:
-        response_data = json.loads(response.get_data())
-        if "errors" in response_data:
-            response_data = {"success": False,
-                             "msg": list(response_data["errors"].items())[0][1]}
+        if response.get_data().strip():
+            response_data = json.loads(response.get_data())
+            if "errors" in response_data:
+                response_data = {"success": False,
+                                "msg": list(response_data["errors"].items())[0][1]}
             response.set_data(json.dumps(response_data))
-        response.headers.add('Content-Type', 'application/json')
+            response.headers.add('Content-Type', 'application/json')
     return response
 
-@app.before_request
+'''@app.before_request
 def log_request_info():
     app.logger.debug('Headers: %s', request.headers)
     app.logger.debug('Body: %s', request.get_data(as_text=True))
     # If you expect JSON and want to log it as a dictionary:
     if request.is_json:
         app.logger.debug('JSON: %s', json.dumps(request.get_json()))
-
+'''
 
 @app.cli.command("seed_db")
 def seed_db():

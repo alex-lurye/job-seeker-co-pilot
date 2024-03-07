@@ -13,7 +13,7 @@ from flask_restx import Api, Resource, fields
 
 import jwt
 
-from .models import Education, Experience, Skill, db, Users, JWTTokenBlocklist
+from .models import Education, Experience, Position, Skill, db, Users, JWTTokenBlocklist
 from .config import BaseConfig
 import requests
 
@@ -289,3 +289,39 @@ class SettingsSaver(Resource):
         }
 
         return user_details, 200
+    
+@rest_api.route('/api/positions')
+class PositionsSaver(Resource):
+    @token_required
+    def post(self, dumb):
+
+        req_data = request.get_json()
+
+        new_position = Position(**req_data, user_id = self.id)
+
+        self.positions.append(new_position)
+
+        self.save()
+
+        return {"success": True,
+                }, 200
+    
+    @token_required
+    def get(self, dumb): 
+
+        return [position.to_dict() for position in self.positions], 200
+
+@rest_api.route('/api/positions/<int:position_id>') 
+class PositionDetail(Resource):
+    @token_required
+    def get(self, dumb, position_id):  # The method now accepts position_id as a parameter
+
+        # Find the position by ID
+        position = next((position for position in self.positions if position.id == position_id), None)
+
+        # If position is found, return its dictionary representation
+        if position:
+            return position.to_dict(), 200
+
+        # If not found, return an error message
+        return {"message": "Position not found"}, 404
