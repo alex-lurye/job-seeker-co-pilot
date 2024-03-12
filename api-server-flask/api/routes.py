@@ -248,6 +248,7 @@ class SettingsSaver(Resource):
 
         req_data = request.get_json()
 
+        print("Request JSON received:\n")
         print(request.get_json())
 
         Experience.query.filter_by(user_id=self.id).delete()  # Delete old experiences
@@ -270,14 +271,21 @@ class SettingsSaver(Resource):
         self.skills.append(new_skills)
 
         self.save()
-        '''user.experiences = req_data.get('experiences')
-        user.educations = data.get('educations')
-        user.skills = data.get('skills')
-        
-        db.session.commit() 
-        '''
-        return {"success": True,
-                }, 200
+
+        ''' Now update the generator service '''
+
+
+        response = requests.post(BaseConfig.GENERATOR_API + "/update-user-details", headers={
+            "Authorization": BaseConfig.GENERATOR_AUTH_KEY }, json= {
+                "experiences": [experience.to_dict_full() for experience in self.experiences],
+                "educations": [education.to_dict_full() for education in self.educations],
+                "skill": self.skills[0].to_dict_full() if self.skills else '' 
+            })
+
+        print(str(response.status_code) + ": "+ response.text)
+
+        return {"success": True if response.status_code == 200 else False,
+                }, response.status_code
     
     @token_required
     def get(self, dumb): 

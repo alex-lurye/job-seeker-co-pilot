@@ -60,3 +60,6 @@ class BaseConfig():
 
         # This will create a file in <app> FOLDER
         SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+
+    GENERATOR_API = os.getenv('GENERATOR_API', None)
+    GENERATOR_AUTH_KEY = os.getenv('GENERATOR_AUTH_KEY', None)
