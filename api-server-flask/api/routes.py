@@ -334,6 +334,17 @@ class PositionDetail(Resource):
 
         # If not found, return an error message
         return {"message": "Position not found"}, 404
+    @token_required
+    def delete(self, dumb, position_id):
+        # Find the position by ID
+        position = next((position for position in self.positions if position.id == position_id), None)
+        
+        if position:
+            db.session.delete(position)
+            db.session.commit()
+            return {'message': 'Position deleted successfully'}, 200
+        else:
+            return {'message': 'Position not found'}, 404
 
 @rest_api.route('/api/generate-resume/<int:position_id>')
 class GenerationHandler(Resource):

@@ -7,6 +7,7 @@ import SubCard from '../../ui-component/cards/SubCard';
 import TextField from '@material-ui/core/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
+import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Grid from '@mui/material/Grid';
@@ -435,6 +436,7 @@ function Settings() {
                 {/* Skill Input */}
                 <h3>Skills</h3>
                 <TextField
+                style={{ paddingBottom: '20px' }}
                 name="skill"
                 fullWidth
                 multiline
@@ -448,7 +450,10 @@ function Settings() {
                 {/*<h3>Certifications</h3>*/}
                 {/* Repeat structure for certification fields */}
                 
-                <button type="submit">Save Settings</button>
+                <Button startIcon={<SaveIcon />}  
+                  variant="contained"
+                  type="submit"
+                  >Save Settings</Button>
                 {submissionSuccess && <p style={{ color: 'green' }}>Settings saved successfully!</p>}
                 {submissionSuccess === false && <p style={{ color: 'red' }}>{errorMessage}</p>}
           </form>
