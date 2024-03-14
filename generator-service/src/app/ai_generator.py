@@ -22,8 +22,12 @@ async def generate_resume(data):
         My skills:
         {skills}
         I'm compiling a resume to apply for the position. 
-        Can you write a one paragraph (up to 100 words) text that will appear in the first section of the resume under Professional Summary title?
-        It should align as much as possible with the position description. Do not invent any qualities or experiences that I don't have. 
+        Write for me: 
+         - A one paragraph (up to 100 words) text that will appear in the first section of the resume under Professional Summary title
+         - Four bullet points outlining my most important qualifications for the position?
+        The texts should align as much as possible with the position description. 
+        Do not invent any qualities or experiences that I don't have. 
+        Do not include any irrelevant information. Do not include information that can show me as overqualified.
         """
         # prompt = PromptTemplate.from_template(template=template)
  
