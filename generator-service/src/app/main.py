@@ -28,16 +28,15 @@ async def validate_api_key(credentials: HTTPAuthorizationCredentials = Depends(s
 async def update_user_details( data: UpdateRequest, api_key: str = Depends(validate_api_key)):
     try:
         # Update Experiences
-        for experience in data.get('experiences', []):
+        for experience in data.experiences:
             upsert_object_in_weaviate( "Experience", experience)
         
         # Update Education
-        for education in data.get('educations', []):
+        for education in data.educations:
             upsert_object_in_weaviate( "Education", education)
         
         # Update Skills - Assuming a single skills object per user
-        if 'skill' in data:
-            upsert_object_in_weaviate( "Skill", data['skill'])
+        upsert_object_in_weaviate( "Skill", data.skill)
 
         return {"message": "User details updated successfully"}
     except Exception as e:

@@ -31,12 +31,12 @@ def find_object(properties, class_name):
         "operands": [{
             "path": ["userId"],
             "operator": "Equal",
-            "valueInt": properties["userId"]
+            "valueInt": properties.__dict__["userId"]
         },
         {
             "path": [class_name.lower()+"Id"],
             "operator": "Equal",
-            "valueInt": properties[class_name+"Id"]
+            "valueInt": properties.__dict__[class_name+"Id"]
         }
         ]
     }
@@ -67,7 +67,7 @@ def find_skill(properties):
 
 def default_handler(properties):
     # Default handler if class name does not match
-    app.logger.info("No handler for class with data:", properties)
+    logging.info("No handler for class with data:", properties)
 
     return None
 
@@ -91,18 +91,18 @@ def upsert_object_in_weaviate(class_name, properties):
 
     if object_uuid['data']['Get'][class_name]:
         # Object exists, update it
-        app.logger.info("object exists, updating it")
+        logging.info("object exists, updating it")
         id_path = object_uuid.get('data', {}).get('Get', {}).get(class_name, [{}])[0].get('_additional', {}).get('id')
         if id_path:
-            client.data_object.update(uuid=id_path, class_name=class_name, data_object=properties)
+            client.data_object.update(uuid=id_path, class_name=class_name, data_object=properties.__dict__)
         else:
             print("ID path does not exist")
 
     else:
         # Object does not exist, create a new one
-        app.logger.info("new object, creating it")
+        logging.info("new object, creating it")
         uuid = client.data_object.create(class_name=class_name,
-            data_object=properties)
+            data_object=properties.__dict__)
 
 def get_user_experiences_from_weaviate(userId):
 

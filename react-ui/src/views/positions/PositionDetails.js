@@ -23,6 +23,10 @@ const PositionDetails = () => {
         description:'',
         date:''
     });
+    const [jobId, setJobId] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [resume, setResume] = useState(null); 
+
     let { id } = useParams();
 
     const account = useSelector((state) => state.account);
@@ -32,7 +36,7 @@ const PositionDetails = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(configData.API_SERVER + 'positions/' + id, {
-                    headers: { Authorization: `${account.token}` }, // Assuming you need to authorize
+                    headers: { Authorization: `${account.token}` }, 
                 });
                 const data = response.data;
                 console.log(data);
@@ -52,8 +56,69 @@ const PositionDetails = () => {
         fetchData();
     }, []); // useEffect dependency array
 
-    const generateResume = () => {
-        // Add your logic here
+    useEffect(() => {
+        let intervalId = null;
+    
+        const checkJobStatus = async () => {
+            if (jobId) {
+                
+                try {
+                    const response = await axios.get(configData.API_SERVER + 'generation-status/' + jobId, {
+                        headers: { Authorization: `${account.token}` }, 
+                    });
+                    const data = response.data;
+                    console.log(data);
+        
+                    if(data.status === 'Completed'){
+                        clearInterval(intervalId);
+                        setIsLoading(false);
+                        setResume(data.result);
+                        setJobId(null);
+                    }
+                    
+                } catch (error) {
+                    if(error.response){
+                        if(error.response.status === 401 || error.response.status === 403 ) {
+        
+                            dispatcher({type: LOGOUT })
+                        }
+                    }
+                }
+            }
+        };
+    
+        if (jobId) {
+          intervalId = setInterval(checkJobStatus, 2000); // Poll every 2 seconds
+        }
+    
+        // Cleanup on component unmount
+        return () => clearInterval(intervalId);
+    }, [jobId]);
+
+    
+    const generateResume = async () => {
+        
+        setIsLoading(true);
+        try {
+            const response = await axios.post(configData.API_SERVER + 'generate-resume/'+ id, 
+            {position},
+            {
+                headers: { Authorization: `${account.token}` }, 
+            });
+            const data = response.data;
+            console.log("Initiated resume generation... Job id:")
+            console.log(data.job_id);
+
+            setJobId(data.job_id);
+            
+        } catch (error) {
+            if(error.response){
+                if(error.response.status === 401 || error.response.status === 403 ) {
+
+                    dispatcher({type: LOGOUT })
+                }
+            }
+        }
     };
 
     const generateCover = () => {
@@ -93,12 +158,17 @@ const PositionDetails = () => {
                                 onClick={generateResume}
                                 variant="contained"
                             >Generate Resume</Button>
+                            {isLoading && <p>Loading...</p>}
                             <Button
                                 startIcon={<AddCircleOutlineIcon />}
                                 onClick={generateCover}
                                 variant="contained"
                             >Generate Cover Letter</Button>
                         </Box>
+                        {resume && 
+                        <Box display="flex" justifyContent="center" gap="16px" p={1}>
+                            <p>{resume}</p>
+                        </Box>}
                     </SubCard>
                 </>
             )}

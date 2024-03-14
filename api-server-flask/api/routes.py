@@ -276,7 +276,8 @@ class SettingsSaver(Resource):
 
 
         response = requests.post(BaseConfig.GENERATOR_API + "/update-user-details", headers={
-            "Authorization": BaseConfig.GENERATOR_AUTH_KEY }, json= {
+            "Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}' }, json= {
+                "userId": self.id,
                 "experiences": [experience.to_dict_full() for experience in self.experiences],
                 "educations": [education.to_dict_full() for education in self.educations],
                 "skill": self.skills[0].to_dict_full() if self.skills else '' 
@@ -333,3 +334,33 @@ class PositionDetail(Resource):
 
         # If not found, return an error message
         return {"message": "Position not found"}, 404
+
+@rest_api.route('/api/generate-resume/<int:position_id>')
+class GenerationHandler(Resource):
+    @token_required
+    def post(self, dumb, position_id):  # this endpoint is used to generate a resume
+        
+         # Find the position by ID
+        position : Position = next((position for position in self.positions if position.id == position_id), None)
+    
+        # we initiate the resume generation process
+        # client will receive generator response including job id
+        # client should poll 
+        response = requests.post(BaseConfig.GENERATOR_API + "/generate-resume",
+            headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'},
+            json={'userId': self.id,
+                  'title': position.title, 'description': position.description})
+        
+        return response.json(), response.status_code
+    
+@rest_api.route('/api/generation-status/<int:job_id>')
+class GenerationStatus(Resource):
+    @token_required
+    def get(self, dumb, job_id):
+        
+        # we act as a pure proxy to generation handler
+        response = requests.get(BaseConfig.GENERATOR_API + f"/generation-status/{job_id}",
+            headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'})
+        
+        return response.json(), response.status_code
+        

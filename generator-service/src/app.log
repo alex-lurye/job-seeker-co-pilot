@@ -1,7 +1,0 @@
-[2024-03-11 17:44:20,397] INFO in _internal:  * Running on all addresses (0.0.0.0)
-   WARNING: This is a development server. Do not use it in a production deployment.
- * Running on http://127.0.0.1:5001
- * Running on http://192.168.0.30:5001 (Press CTRL+C to quit)
-[2024-03-11 17:44:20,398] INFO in _internal:  * Restarting with stat
-[2024-03-11 17:55:50,358] INFO in _internal:  * Restarting with stat
-[2024-03-11 18:38:04,580] INFO in _internal:  * Restarting with stat
