@@ -1,7 +1,7 @@
+import logging
 import weaviate
 from dotenv import load_dotenv
 import os
-from flask import current_app as app
 
 
 # Load environment variables from a .env file for secure credential management
@@ -46,21 +46,21 @@ def find_object(properties, class_name):
 
 def find_experience(properties):
     # Process data for an Experience object
-    app.logger.info("Handling Experience class with data:", properties)
+    logging.info("Handling Experience class with data:", properties)
 
     return find_object(properties,"Experience")
 
 
 def find_education(properties):
     # Process data for an Education object
-    app.logger.info("Handling Education class with data:", properties)
+    logging.info("Handling Education class with data:", properties)
 
     return find_object(properties,"Education")
 
 
 def find_skill(properties):
     # Process data for a Skill object
-    app.logger.info("Handling Skill class with data:", properties)
+    logging.info("Handling Skill class with data:", properties)
 
     return find_object(properties,"Skill")
 
@@ -104,3 +104,37 @@ def upsert_object_in_weaviate(class_name, properties):
         uuid = client.data_object.create(class_name=class_name,
             data_object=properties)
 
+def get_user_experiences_from_weaviate(userId):
+
+    where_filter = {
+        "path": ["userId"],
+        "operator": "Equal",
+        "valueInt": userId
+    }
+
+    return client.query.get("Experience",
+                        ["positionTitle","description"]).with_additional(['id']).with_where(where_filter).do()
+
+
+def get_user_educations_from_weaviate(userId):
+
+    where_filter = {
+        "path": ["userId"],
+        "operator": "Equal",
+        "valueInt": userId
+    }
+
+    return client.query.get("Education",
+                        ["institution","fieldOfStudy","additionalInfo"]).with_additional(['id']).with_where(where_filter).do()
+
+
+def get_user_skills_from_weaviate(userId):
+
+    where_filter = {
+        "path": ["userId"],
+        "operator": "Equal",
+        "valueInt": userId
+    }
+
+    return client.query.get("Skill",
+                        ["description"]).with_additional(['id']).with_where(where_filter).do()
