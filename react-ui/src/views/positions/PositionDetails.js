@@ -58,8 +58,11 @@ const PositionDetails = () => {
 
     useEffect(() => {
         let intervalId = null;
-    
+        let shouldStop = false; 
+
         const checkJobStatus = async () => {
+            if (shouldStop) return;
+
             if (jobId) {
                 
                 try {
@@ -74,6 +77,7 @@ const PositionDetails = () => {
                         setIsLoading(false);
                         setResume(data.result);
                         setJobId(null);
+                        shouldStop = true;
                     }
                     
                 } catch (error) {

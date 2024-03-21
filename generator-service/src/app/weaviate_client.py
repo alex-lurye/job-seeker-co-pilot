@@ -24,6 +24,29 @@ if WEAVIATE_AUTH_TOKEN is not None:
 # Initialize the Weaviate client instance
 client = weaviate.Client(**client_config)
 
+properties_translation = {
+    "company": "company",
+    "country_iso2": "countryIso2",
+    "start_year": "startYear",
+    "end_year": "endYear",
+    "position_title": "positionTitle",
+    "institution" : "institution",
+    "field_of_study" : "fieldOfStudy",
+    "additional_info" : "additionalInfo",
+}
+
+def translate_properties_to_weaviate(properties):
+    """
+    Translate properties to Weaviate format.
+    """
+    translated_properties = {}
+    for key, value in properties.__dict__.items():
+        if key in properties_translation:
+            translated_properties[properties_translation[key]] = value
+        else:
+            translated_properties[key] = value
+    return translated_properties
+
 def find_object(properties, class_name):
 
     where_filter = {
@@ -89,12 +112,14 @@ def upsert_object_in_weaviate(class_name, properties):
     """
     object_uuid = find_object_in_weaviate(class_name, properties)
 
+    properties = translate_properties_to_weaviate(properties)
+
     if object_uuid['data']['Get'][class_name]:
         # Object exists, update it
         logging.info("object exists, updating it")
         id_path = object_uuid.get('data', {}).get('Get', {}).get(class_name, [{}])[0].get('_additional', {}).get('id')
         if id_path:
-            client.data_object.update(uuid=id_path, class_name=class_name, data_object=properties.__dict__)
+            client.data_object.update(uuid=id_path, class_name=class_name, data_object=properties)
         else:
             print("ID path does not exist")
 
@@ -102,7 +127,7 @@ def upsert_object_in_weaviate(class_name, properties):
         # Object does not exist, create a new one
         logging.info("new object, creating it")
         uuid = client.data_object.create(class_name=class_name,
-            data_object=properties.__dict__)
+            data_object=properties)
 
 def get_user_experiences_from_weaviate(userId):
 
@@ -113,7 +138,8 @@ def get_user_experiences_from_weaviate(userId):
     }
 
     return client.query.get("Experience",
-                        ["positionTitle","description"]).with_additional(['id']).with_where(where_filter).do()
+                        ["company","countryIso2","startYear","endYear","positionTitle","description"]).with_additional(['id']).with_where(where_filter).with_sort(
+                            { 'path': ['startYear'], 'order': 'desc' }).do()
 
 
 def get_user_educations_from_weaviate(userId):
@@ -125,7 +151,7 @@ def get_user_educations_from_weaviate(userId):
     }
 
     return client.query.get("Education",
-                        ["institution","fieldOfStudy","additionalInfo"]).with_additional(['id']).with_where(where_filter).do()
+                        ["institution","startYear","endYear","fieldOfStudy","additionalInfo"]).with_additional(['id']).with_where(where_filter).do()
 
 
 def get_user_skills_from_weaviate(userId):

@@ -48,7 +48,7 @@ async def generate_resume(data):
         My skills:
         {skills_list}
         I'm compiling a resume to apply for the position. 
-        Write for me a one paragraph (up to 100 words) text that will appear in the first section of the resume under Professional Summary title.
+        Write for me a one paragraph (three sentences) text that will appear in the first summary section of the resume.
         The text should align as much as possible with the position description. 
         Do not invent any qualities or experiences that I don't have. 
         Do not include any irrelevant information. Do not include information that can show me as overqualified.
@@ -67,9 +67,9 @@ async def generate_resume(data):
 #        llm_chain = LLMChain(prompt=prompt, llm=llm)
         prof_summary = conversation.invoke(initial_prompt)
         
-        key_points = conversation("Now generate four bullet points outlining my four most important qualifications for the position.Exclude any introductory text or explanations, and only include the numbered bullet points.")
+        key_points = conversation.invoke("Now generate four bullet points outlining my four most important qualifications for the position.Exclude any introductory text or explanations, and only include the numbered bullet points.")
 
-        response = create_resume(prof_summary['response'], key_points['response'], experiences, educations, skills)
+        response = create_resume(prof_summary['response'], key_points['response'], experiences['data']['Get']['Experience'], educations['data']['Get']['Education'], skills['data']['Get']['Skill'])
         return response
     except Exception as e:
         return str(e)
