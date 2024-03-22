@@ -9,3 +9,4 @@ env/
 env__/
 .vscode/symbols.json
 api/db.sqlite3
+.env

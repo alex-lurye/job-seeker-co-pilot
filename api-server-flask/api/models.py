@@ -40,6 +40,14 @@ class Experience(db.Model):
             'position_title': self.position_title,
             'description': self.description
         }
+    
+    def to_dict_full(self):
+        ids_dict = {
+            'ExperienceId': self.id,
+            'userId': self.user_id
+        }
+        full_dict = {**ids_dict, **self.to_dict()}
+        return full_dict
 
 class Education(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -53,6 +61,7 @@ class Education(db.Model):
 
     def to_dict(self):
         return {
+
             'institution': self.institution,
             'country_iso2': self.country_iso2,
             'start_year': self.start_year,
@@ -60,11 +69,36 @@ class Education(db.Model):
             'field_of_study': self.field_of_study,
             'additional_info': self.additional_info
         }
+    
+    def to_dict_full(self):
+        
+        ids_dict = {
+            'EducationId': self.id,
+            'userId': self.user_id
+        }
+        full_dict = {**ids_dict, **self.to_dict()}
+
+        return full_dict
 
 class Skill(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     description = db.Column(db.Text, nullable=False)
+
+    def to_dict(self):
+        return {
+            'description': self.description
+        }
+
+    def to_dict_full(self):
+        
+        ids_dict = {
+            'SkillId': self.id,
+            'userId': self.user_id
+        }
+        full_dict = {**ids_dict, **self.to_dict()}
+        
+        return full_dict
 
 class Certification(db.Model):
     id = db.Column(db.Integer, primary_key=True)

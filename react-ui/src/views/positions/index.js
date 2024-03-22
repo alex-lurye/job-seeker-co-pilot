@@ -14,6 +14,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 import AddPositionModal from './AddPositionModal';
 import configData from '../../config';
 import { LOGOUT } from './../../store/actions';
@@ -40,6 +42,27 @@ const Positions = () => {
     const account = useSelector((state) => state.account);
 
     const dispatcher = useDispatch();
+
+    const handleDelete = async (id) => {
+        try {
+            const response = await axios.delete(configData.API_SERVER + 'positions/' + id, {
+                headers: { Authorization: `${account.token}` }, // Assuming you need to authorize
+            });
+            const data = response.data;
+            console.log(data);
+            setPositions(positions.filter((position) => position.id !== id));
+        } catch (error) {
+            if(error.response){
+                if(error.response.status === 401 || error.response.status === 403 ) {
+
+                    dispatcher({type: LOGOUT })
+                }
+            }
+            console.error('Failed to delete position:', error);
+            // Handle error appropriately
+        }
+    }
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -88,6 +111,15 @@ const Positions = () => {
                                     </React.Fragment>
                                 }
                             />
+                            <IconButton type="button" aria-label="delete"
+                            onClick={(e) => {
+                                e.preventDefault(); 
+                                handleDelete(position.id); 
+                            }}
+                            sx={{ minWidth: 'auto', padding: 1 }}
+                            >
+                            <DeleteIcon /> 
+                        </IconButton>
                         </ListItem>
                     </Link>
                 ))}

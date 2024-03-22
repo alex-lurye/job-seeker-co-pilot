@@ -1,11 +1,12 @@
 // assets
-import { IconBrandChrome, IconHelp, IconSitemap } from '@tabler/icons';
+import { IconPencil, IconHelp, IconSitemap,IconSettings } from '@tabler/icons';
 
 // constant
 const icons = {
-    IconBrandChrome: IconBrandChrome,
+    IconPencil: IconPencil,
     IconHelp: IconHelp,
-    IconSitemap: IconSitemap
+    IconSitemap: IconSitemap,
+    IconSettings: IconSettings
 };
 
 //-----------------------|| Settings & DOCUMENTATION MENU ITEMS ||-----------------------//
@@ -19,7 +20,7 @@ export const other = {
             title: 'Positions',
             type: 'item',
             url: '/positions',
-            icon: icons['IconBrandChrome'],
+            icon: icons['IconPencil'],
             breadcrumbs: false
         },
         {
@@ -27,10 +28,10 @@ export const other = {
             title: 'Settings',
             type: 'item',
             url: '/settings',
-            icon: icons['IconBrandChrome'],
+            icon: icons['IconSettings'],
             breadcrumbs: false
         },
-        {
+     /*   {
             id: 'documentation',
             title: 'Documentation',
             type: 'item',
@@ -38,6 +39,6 @@ export const other = {
             icon: icons['IconHelp'],
             external: true,
             target: true
-        }
+        }*/
     ]
 };

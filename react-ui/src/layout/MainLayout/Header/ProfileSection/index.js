@@ -248,8 +248,6 @@ const ProfileSection = () => {
                                         />
                                         <Divider />
                                         <PerfectScrollbar className={classes.ScrollHeight}>
-                                            <UpgradePlanCard />
-                                            <Divider />
                                             <Card className={classes.card}>
                                                 <CardContent>
                                                     <Grid container spacing={3} direction="column">

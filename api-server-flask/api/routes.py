@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from inspect import Traceback
 
-from flask import Blueprint,request,jsonify
+from flask import Blueprint,request,jsonify, send_from_directory
 from flask_restx import Api, Resource, fields
 
 import jwt
@@ -248,6 +248,7 @@ class SettingsSaver(Resource):
 
         req_data = request.get_json()
 
+        print("Request JSON received:\n")
         print(request.get_json())
 
         Experience.query.filter_by(user_id=self.id).delete()  # Delete old experiences
@@ -270,14 +271,22 @@ class SettingsSaver(Resource):
         self.skills.append(new_skills)
 
         self.save()
-        '''user.experiences = req_data.get('experiences')
-        user.educations = data.get('educations')
-        user.skills = data.get('skills')
-        
-        db.session.commit() 
-        '''
-        return {"success": True,
-                }, 200
+
+        ''' Now update the generator service '''
+
+
+        response = requests.post(BaseConfig.GENERATOR_API + "/update-user-details", headers={
+            "Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}' }, json= {
+                "userId": self.id,
+                "experiences": [experience.to_dict_full() for experience in self.experiences],
+                "educations": [education.to_dict_full() for education in self.educations],
+                "skill": self.skills[0].to_dict_full() if self.skills else '' 
+            })
+
+        print(str(response.status_code) + ": "+ response.text)
+
+        return {"success": True if response.status_code == 200 else False,
+                }, response.status_code
     
     @token_required
     def get(self, dumb): 
@@ -325,3 +334,53 @@ class PositionDetail(Resource):
 
         # If not found, return an error message
         return {"message": "Position not found"}, 404
+    @token_required
+    def delete(self, dumb, position_id):
+        # Find the position by ID
+        position = next((position for position in self.positions if position.id == position_id), None)
+        
+        if position:
+            db.session.delete(position)
+            db.session.commit()
+            return {'message': 'Position deleted successfully'}, 200
+        else:
+            return {'message': 'Position not found'}, 404
+
+@rest_api.route('/api/generate-resume/<int:position_id>')
+class GenerationHandler(Resource):
+    @token_required
+    def post(self, dumb, position_id):  # this endpoint is used to generate a resume
+        
+         # Find the position by ID
+        position : Position = next((position for position in self.positions if position.id == position_id), None)
+    
+        # we initiate the resume generation process
+        # client will receive generator response including job id
+        # client should poll 
+        response = requests.post(BaseConfig.GENERATOR_API + "/generate-resume",
+            headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'},
+            json={'userId': self.id,
+                  'title': position.title, 'description': position.description})
+        
+        return response.json(), response.status_code
+    
+@rest_api.route('/api/generation-status/<int:job_id>')
+class GenerationStatus(Resource):
+    @token_required
+    def get(self, dumb, job_id):
+        
+        # we act as a pure proxy to generation handler
+        response = requests.get(BaseConfig.GENERATOR_API + f"/generation-status/{job_id}",
+            headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'})
+        
+        return response.json(), response.status_code
+
+@rest_api.route("/api/download-resume/<int:job_id>")
+class DownloadResume(Resource):
+    @token_required
+    def get(self, dumb, job_id):
+    
+        #this is a temporary solution, we need to save the file to a bucket
+        directory = '/tmp'
+        return send_from_directory(directory,f'resume{job_id}.docx', as_attachment=True)
+    

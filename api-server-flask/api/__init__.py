@@ -67,7 +67,8 @@ def after_request(response):
     """
        Sends back a custom error with {"success", "msg"} format
     """
-    if int(response.status_code) >= 400:
+    content_type = response.headers.get('Content-Type', '')
+    if int(response.status_code) >= 400 and 'application/json' in content_type:
         if response.get_data().strip():
             response_data = json.loads(response.get_data())
             if "errors" in response_data:
