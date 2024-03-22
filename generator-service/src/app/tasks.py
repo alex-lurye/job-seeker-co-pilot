@@ -13,7 +13,7 @@ def schedule_task(function: Any, *args: Any, **kwargs: Any):
     global last_task_id
     last_task_id += 1
     # Create an asyncio task for do_work function
-    task = asyncio.create_task(function(*args, **kwargs))
+    task = asyncio.create_task(function(last_task_id, *args, **kwargs))
     # Store the task with its ID
     tasks[last_task_id] = task
     

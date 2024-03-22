@@ -9,7 +9,7 @@ from .resume_creator import create_resume
 
 import asyncio
 
-async def generate_resume(data):
+async def generate_resume(task_id, data):
 
     try:
         if not data.userId:
@@ -69,7 +69,7 @@ async def generate_resume(data):
         
         key_points = conversation.invoke("Now generate four bullet points outlining my four most important qualifications for the position.Exclude any introductory text or explanations, and only include the numbered bullet points.")
 
-        response = create_resume(prof_summary['response'], key_points['response'], experiences['data']['Get']['Experience'], educations['data']['Get']['Education'], skills['data']['Get']['Skill'])
+        response = create_resume(task_id, prof_summary['response'], key_points['response'], experiences['data']['Get']['Experience'], educations['data']['Get']['Education'], skills['data']['Get']['Skill'])
         return response
     except Exception as e:
         return str(e)

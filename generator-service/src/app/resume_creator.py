@@ -101,7 +101,7 @@ def clone_paragraph(paragraph, old_text, new_text):
     
     return new_paragraph
 
-def create_resume(prof_summary: str, key_competiences: str, experiences: list, educations: list, skills: list):
+def create_resume(task_id: int, prof_summary: str, key_competiences: str, experiences: list, educations: list, skills: list):
 
     template_path = './resources/Resume_template.docx'
     
@@ -186,6 +186,6 @@ def create_resume(prof_summary: str, key_competiences: str, experiences: list, e
         first_education_replacements = create_replacements_dict(educations[0])
         replace_section_content(doc, section_start_index, education_section_length, first_education_replacements)
     
-    doc.save('/tmp/resume.docx')
+    doc.save(f'/tmp/resume{task_id}.docx')
 
-    return '/tmp/resume.docx'
+    return 'resume{task_id}.docx'

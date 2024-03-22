@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import os
 
+from flask import send_from_directory
 import uvicorn
 from .models import UpdateRequest, ResumeGenerationRequest
 from .weaviate_client import upsert_object_in_weaviate
@@ -58,8 +59,17 @@ async def check_generation_status(task_id: str, api_key: str = Depends(validate_
             return {"status": "In progress"} 
         else:
             return {"status": "Completed", "result": status}
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+@api_router.get("/download-resume/{task_id}")
+async def download_resume(task_id: str, api_key: str = Depends(validate_api_key)):
+    
+    directory = '/tmp'
+    return send_from_directory(directory,f'resume{task_id}.docx', as_attachment=True)
     
     
 app.include_router(api_router)

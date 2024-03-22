@@ -8,7 +8,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from inspect import Traceback
 
-from flask import Blueprint,request,jsonify
+from flask import Blueprint,request,jsonify, send_from_directory
 from flask_restx import Api, Resource, fields
 
 import jwt
@@ -374,4 +374,13 @@ class GenerationStatus(Resource):
             headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'})
         
         return response.json(), response.status_code
-        
+
+@rest_api.route("/api/download-resume/<int:job_id>")
+class DownloadResume(Resource):
+    @token_required
+    def get(self, dumb, job_id):
+    
+        #this is a temporary solution, we need to save the file to a bucket
+        directory = '/tmp'
+        return send_from_directory(directory,f'resume{job_id}.docx', as_attachment=True)
+    
