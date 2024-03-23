@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 # uvicorn
-CMD ["uvicorn", "src.app.main:app", "--reload"]
+CMD ["uvicorn", "src.app.main:app", "--reload", "--port", "5001"]
