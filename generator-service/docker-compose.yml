@@ -1,0 +1,14 @@
+services:
+  generator:
+    container_name: generator
+    restart: always
+    env_file: src/.env
+    build: .
+    ports:
+      - "5001:5001"  # Expose port 5001
+    networks:
+      - db_network
+
+networks:
+  db_network:
+    external: true  

@@ -10,14 +10,14 @@ import { useTheme } from '@material-ui/styles';
  * import logo from './../../assets/images/logo.svg';
  *
  */
-import coPilotImage from '../assets/images/co-pilot.png';
+import coPilotImage from '../assets/images/applyswift.png';
 //-----------------------|| LOGO SVG ||-----------------------//
 
 const Logo = () => {
     const theme = useTheme();
 
     return (
-        <img src={coPilotImage} alt="Co-Pilot" width="100" />
+        <img src={coPilotImage} alt="ApplySwift" width="100" />
         /**
          * if you want to use image instead of svg uncomment following, and comment out <svg> element.
          *
