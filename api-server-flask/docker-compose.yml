@@ -2,6 +2,8 @@ version: '3.8'
 services:
   flask_api:
     container_name: flask_api
+    volumes:
+      - sqlitedb:/var/lib/sqlite
     restart: always
     env_file: .env
     build: .
@@ -25,4 +27,6 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
+volumes:
+  sqlitedb:
  

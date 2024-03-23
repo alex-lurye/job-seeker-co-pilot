@@ -9,7 +9,7 @@ load_dotenv()
 
 
 # Environment variables for Weaviate connection
-WEAVIATE_URL = os.getenv("WEAVIATE_URL", "http://localhost:8080")
+WEAVIATE_URL = os.getenv("WEAVIATE_URL", "http://weaviate:8080")
 WEAVIATE_AUTH_TOKEN = os.getenv("WEAVIATE_AUTH_TOKEN", None)
 
 client_config = {

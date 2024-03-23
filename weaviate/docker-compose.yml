@@ -10,9 +10,6 @@ services:
     - --scheme
     - http
     image: cr.weaviate.io/semitechnologies/weaviate:1.24.1
-    ports:
-    - 8080:8080
-    - 50051:50051
     volumes:
     - weaviate_data:/var/lib/weaviate
     restart: on-failure:0
@@ -23,6 +20,12 @@ services:
       DEFAULT_VECTORIZER_MODULE: 'none'
       ENABLE_MODULES: 'text2vec-cohere,text2vec-huggingface,text2vec-palm,text2vec-openai,generative-openai,generative-cohere,generative-palm,ref2vec-centroid,reranker-cohere,qna-openai'
       CLUSTER_HOSTNAME: 'node1'
+    networks:
+      - db_network
 volumes:
   weaviate_data:
+
+networks:
+  db_network:
+    external: true  
 ...
