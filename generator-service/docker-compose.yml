@@ -8,7 +8,10 @@ services:
       - "5001:5001"  # Expose port 5001
     networks:
       - db_network
+      - app_network
 
 networks:
   db_network:
     external: true  
+  app_network:
+    external: true
