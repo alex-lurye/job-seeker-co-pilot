@@ -20,6 +20,8 @@ services:
       - ./nginx:/etc/nginx/conf.d
     networks:
       - web_network
+      - app-network
+    external: true
     depends_on: 
       - flask_api
 networks:
@@ -27,6 +29,9 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
+  app-network:
+    external: true
+
 volumes:
   sqlitedb:
  
