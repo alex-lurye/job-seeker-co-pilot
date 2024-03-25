@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 
 classes = [
   {
@@ -119,11 +120,12 @@ classes = [
   }
 ]
 
-weaviate_url = "http://localhost:8080/v1/schema"
+weaviate_url = "http://weaviate:8080/v1/schema"
 
 headers = {
     "Content-Type": "application/json"
 }
+time.sleep(30)
 
 for obj in classes:
     response = requests.post(weaviate_url, headers=headers, data=json.dumps(obj))

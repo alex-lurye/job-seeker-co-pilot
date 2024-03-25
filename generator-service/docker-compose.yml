@@ -9,6 +9,13 @@ services:
     networks:
       - db_network
       - app_network
+    volumes:
+      - shared_data:/app/data
+
+volumes:
+  shared_data:
+    name: shared_data_volume
+    driver: local
 
 networks:
   db_network:

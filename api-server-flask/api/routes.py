@@ -381,6 +381,6 @@ class DownloadResume(Resource):
     def get(self, dumb, job_id):
     
         #this is a temporary solution, we need to save the file to a bucket
-        directory = '/tmp'
+        directory = '/app/data'
         return send_from_directory(directory,f'resume{job_id}.docx', as_attachment=True)
     

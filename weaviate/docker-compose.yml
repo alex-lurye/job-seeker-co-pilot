@@ -22,6 +22,14 @@ services:
       CLUSTER_HOSTNAME: 'node1'
     networks:
       - db_network
+  schema_initializer:
+    build:
+      context: .
+      dockerfile: Dockerfile.schema_initializer
+    depends_on:
+      - weaviate
+    networks:
+      - db_network
 volumes:
   weaviate_data:
 

@@ -4,12 +4,14 @@ services:
     container_name: flask_api
     volumes:
       - sqlitedb:/var/lib/sqlite
+      - shared_data:/app/data
     restart: always
     env_file: .env
     build: .
     networks:
       - db_network
       - web_network
+      - app_network
   nginx:
     container_name: nginx
     restart: always
@@ -20,8 +22,6 @@ services:
       - ./nginx:/etc/nginx/conf.d
     networks:
       - web_network
-      - app-network
-    external: true
     depends_on: 
       - flask_api
 networks:
@@ -29,9 +29,11 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
-  app-network:
+  app_network:
     external: true
 
 volumes:
   sqlitedb:
- 
+  shared_data:
+    name: shared_data_volume
+    driver: local

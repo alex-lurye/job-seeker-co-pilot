@@ -1,0 +1,12 @@
+# Use the official Python image as the base image
+FROM python:3.9-alpine
+
+# Install the `requests` library
+RUN pip install requests
+
+# Copy your schema initialization script into the container
+COPY init_schema.py /init_schema.py
+
+# Set the command to run your script
+CMD ["python", "/init_schema.py"]
+
