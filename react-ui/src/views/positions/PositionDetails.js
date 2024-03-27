@@ -22,9 +22,17 @@ const PositionDetails = () => {
         description:'',
         date:''
     });
-    const [jobId, setJobId] = useState(null);
+
+    const [job, setJob] = useState( {
+        jobId: '',
+        jobType: '',
+    })
+//    const [jobId, setJobId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [resume, setResume] = useState(null); 
+//    const [resume, setResume] = useState(null); 
+    const [summary, setSummary] = useState(null);
+    const [prompt, setPrompt] = useState(null);
+    const [draft, setDraft] = useState(null);
 
     let { id } = useParams();
 
@@ -87,7 +95,7 @@ const PositionDetails = () => {
     var intervalId = useRef(null);
     useEffect(() => {
 
-        if (!jobId) {
+        if (!job.jobId) {
             if(intervalId.current) { 
                 clearInterval(intervalId.current); intervalId.current = null; 
             } 
@@ -97,23 +105,29 @@ const PositionDetails = () => {
         intervalId.current = setInterval(() => {
 
             console.log("Checking job status...")
-            console.log("Job id: " + jobId)
-            if (jobId) {
+            console.log("Job id: " + job.jobId)
+            if (job.jobId) {
                 
-                axios.get(configData.API_SERVER + 'generation-status/' + jobId, {
+                axios.get(configData.API_SERVER + 'generation-status/' + job.jobId, {
                     headers: { Authorization: `${account.token}` }, 
                 }).then((response) => {
                 const data = response.data;
                 console.log(data);
     
                 if(data.status === 'Completed'){
-                    console.log("Resume generation completed")
+                    console.log("Job completed: " + job.jobId)
                     console.log("Interval id: " + intervalId.current)
                     clearInterval(intervalId.current);
                     setIsLoading(false);
-                    setResume(data.result);
-                    downloadFile(configData.API_SERVER + 'download-resume/' + jobId);
-                    setJobId(null);
+                    console.log(data.result);
+                    if(job.jobType === "RESUME"){
+                        downloadFile(configData.API_SERVER + 'download-resume/' + job.jobId);
+                    }
+                    else if(job.jobType === "SUMMARY"){
+                        setDraft(data.result);
+                        setPrompt(null);
+                    }
+                    setJob({jobId: null, jobType: null});
                 }
                 }).catch (error => {
                     if(error.response){
@@ -122,16 +136,16 @@ const PositionDetails = () => {
                             dispatcher({type: LOGOUT })
                         }
                         else if(error.response.status === 404){
-                            console.log("Job " +jobId + " not found")
+                            console.log("Job " +job.jobId + " not found")
                             console.log("Interval id: " + intervalId.current)
                             clearInterval(intervalId.current);
-                            setJobId(null);
+                            setJob({jobId: null, jobType: null});
                             setIsLoading(false);
                         }
                     }
                     else {
                         console.error('Failed to fetch job status:', error);
-                        setJobId(null);
+                        setJob({jobId: null, jobType: null});
                         clearInterval(intervalId.current);
                     }
                 });
@@ -144,7 +158,7 @@ const PositionDetails = () => {
             console.log("Clearing interval id: " + intervalId.current)
             clearInterval(intervalId.current);
         };
-    }, [account.token, dispatcher, jobId]);
+    }, [account.token, dispatcher, job.jobId]);
 
     
     const generateResume = async () => {
@@ -160,7 +174,7 @@ const PositionDetails = () => {
             console.log("Initiated resume generation... Job id:")
             console.log(data.job_id);
 
-            setJobId(data.job_id);
+            setJob({jobId: data.job_id, jobType:"RESUME"});
             
         } catch (error) {
             if(error.response){
@@ -172,10 +186,30 @@ const PositionDetails = () => {
         }
     };
 
-    const generateCover = () => {
-        // Add your logic here
-    };
-
+    const generateSummary = async () => {
+            
+            setIsLoading(true);
+            try {
+                const response = await axios.post(configData.API_SERVER + 'generate-summary/'+ id, 
+                {draft: draft, prompt: prompt},
+                {
+                    headers: { Authorization: `${account.token}` }, 
+                });
+                const data = response.data;
+                console.log("Initiated summary generation... Job id:")
+                console.log(data.job_id);
+    
+                setJob({jobId: data.job_id, jobType:"SUMMARY"});
+            } catch (error) {
+                if(error.response){
+                    if(error.response.status === 401 || error.response.status === 403 ) {
+    
+                        dispatcher({type: LOGOUT })
+                    }
+                }
+                setIsLoading(false);
+            }
+        }
 
     return (
         <MainCard title="Position management">
@@ -204,6 +238,36 @@ const PositionDetails = () => {
                         <p style={{ fontSize: 'small', textAlign: 'right' }}>{position.date}</p>
                     </SubCard>
                     <SubCard title="Submission helper">
+                        
+                        <TextField
+                                fullWidth
+                                multiline
+                                value={draft || "Professional summary will appear here."}
+                                InputProps={{
+                                readOnly: true,
+                                }}
+                                variant="outlined"
+                                sx={{
+                                '& .MuiInputBase-inputMultiline': {
+                                    height: '200px', 
+                                    overflow: 'auto',
+                                },
+                                }}
+                            />
+                        <Box display="flex" justifyContent="center" gap="16px" p={1}>
+                            <TextField 
+                                margin="normal"
+                                fullWidth 
+                                label="Feedback prompt" 
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
+                            />
+                            <Button
+                                startIcon={<AddCircleOutlineIcon />}
+                                onClick={generateSummary}
+                                variant="contained"
+                            >Generate Professional Summary</Button>
+                        </Box>
                         <Box display="flex" justifyContent="center" gap="16px" p={1}>
                             <Button
                                 startIcon={<AddCircleOutlineIcon />}
@@ -211,16 +275,7 @@ const PositionDetails = () => {
                                 variant="contained"
                             >Generate Resume</Button>
                             {isLoading && <p>Loading...</p>}
-                            <Button
-                                startIcon={<AddCircleOutlineIcon />}
-                                onClick={generateCover}
-                                variant="contained"
-                            >Generate Cover Letter</Button>
                         </Box>
-                        {resume && 
-                        <Box display="flex" justifyContent="center" gap="16px" p={1}>
-                            <p>{resume}</p>
-                        </Box>}
                     </SubCard>
                 </>
             )}

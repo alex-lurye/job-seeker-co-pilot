@@ -364,6 +364,27 @@ class GenerationHandler(Resource):
         
         return response.json(), response.status_code
     
+@rest_api.route('/api/generate-summary/<int:position_id>')
+class GenerationHandler(Resource):
+    @token_required
+    def post(self, dumb, position_id):  # this endpoint is used to generate a resume
+        
+         # Find the position by ID
+        position : Position = next((position for position in self.positions if position.id == position_id), None)
+    
+        req_data = request.get_json()
+        
+        # we initiate the resume generation process
+        # client will receive generator response including job id
+        # client should poll 
+        response = requests.post(BaseConfig.GENERATOR_API + "/generate-summary",
+            headers={"Authorization": f'Bearer {BaseConfig.GENERATOR_AUTH_KEY}'},
+            json={'userId': self.id,
+                  'title': position.title, 'description': position.description,
+                  'draft': req_data['draft'] , 'prompt': req_data['prompt']})
+        
+        return response.json(), response.status_code
+    
 @rest_api.route('/api/generation-status/<int:job_id>')
 class GenerationStatus(Resource):
     @token_required

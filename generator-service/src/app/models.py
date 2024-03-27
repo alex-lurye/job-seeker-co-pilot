@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -36,3 +37,10 @@ class ResumeGenerationRequest(BaseModel):
     userId: int
     title: str
     description: str
+
+class SummaryGenerationRequest(BaseModel):
+    userId: int
+    title: str
+    description: str
+    draft: Optional[str] = None 
+    prompt: Optional[str] = None
