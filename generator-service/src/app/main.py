@@ -1,14 +1,19 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends, HTTPException, APIRouter
+from typing import Union
+from fastapi import FastAPI, Depends, HTTPException, APIRouter, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import os
 
-from flask import send_from_directory
+
+from flask_restx import ValidationError
 import uvicorn
-from .models import UpdateRequest, ResumeGenerationRequest
+from .models import SummaryGenerationRequest, UpdateRequest, ResumeGenerationRequest
 from .weaviate_client import upsert_object_in_weaviate
 from .ai_generator import generate_resume
 from .tasks import schedule_task, get_task_status
+from .ai_generator import generate_summary
 
 
 security = HTTPBearer()
@@ -49,6 +54,10 @@ async def generate_resume_hdlr(data: ResumeGenerationRequest, api_key: str = Dep
     task_id = schedule_task(generate_resume, data)
     return {'job_id': task_id}
 
+@api_router.post("/generate-summary")
+async def generate_summary_hdlr(data: SummaryGenerationRequest, api_key: str = Depends(validate_api_key)):
+    task_id = schedule_task(generate_summary, data)
+    return {'job_id': task_id}
 
 @api_router.get("/generation-status/{task_id}")
 async def check_generation_status(task_id: str, api_key: str = Depends(validate_api_key)):
@@ -64,15 +73,20 @@ async def check_generation_status(task_id: str, api_key: str = Depends(validate_
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+async def http422_error_handler(
+    _: Request, exc: Union[RequestValidationError, ValidationError]
+) -> JSONResponse:
+    raw_body = await _.body()
+    print(raw_body.decode('utf-8'))  # Assuming UTF-8 encoding
+    return JSONResponse(
+        {"errors": exc.errors()}, status_code=422
+    )
 
-@api_router.get("/download-resume/{task_id}")
-async def download_resume(task_id: str, api_key: str = Depends(validate_api_key)):
-    
-    directory = '/tmp'
-    return send_from_directory(directory,f'resume{task_id}.docx', as_attachment=True)
-    
+app.add_exception_handler(ValidationError, http422_error_handler)
+app.add_exception_handler(RequestValidationError, http422_error_handler)
     
 app.include_router(api_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5001)
+    

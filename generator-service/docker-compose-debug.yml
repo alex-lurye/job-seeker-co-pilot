@@ -1,0 +1,27 @@
+services:
+  generator:
+    container_name: generator
+    build: 
+      context: .
+      dockerfile: Dockerfile.debug 
+    restart: always
+    env_file: src/.env
+    ports:
+      - "5001:5001"  # Expose port 5001
+      - "5858:5858"   # Debug port
+    networks:
+      - db_network
+      - app_network
+    volumes:
+      - shared_data:/app/data
+
+volumes:
+  shared_data:
+    name: shared_data_volume
+    driver: local
+
+networks:
+  db_network:
+    external: true  
+  app_network:
+    external: true
