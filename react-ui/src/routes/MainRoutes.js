@@ -17,7 +17,7 @@ const UtilsMaterialIcons = Loadable(lazy(() => import('../views/utilities/Materi
 const UtilsTablerIcons = Loadable(lazy(() => import('../views/utilities/TablerIcons')));
 
 //positions routing
-const PositionDetails = Loadable(lazy(() => import('../views/positions/PositionDetails')))
+const PositionDetails = Loadable(lazy(() => import('../views/positions/PositionDetails')));
 const Positions = Loadable(lazy(() => import('../views/positions')));
 
 // settings routing

@@ -26,7 +26,7 @@ const PositionDetails = () => {
     const [job, setJob] = useState( {
         jobId: '',
         jobType: '',
-    })
+    });
 //    const [jobId, setJobId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 //    const [resume, setResume] = useState(null); 
@@ -56,7 +56,7 @@ const PositionDetails = () => {
             const downloadUrl = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = downloadUrl;
-            a.download = "resume.docx"; // Provide a filename here
+            a.download = 'resume.docx'; // Provide a filename here
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(downloadUrl);
@@ -81,7 +81,7 @@ const PositionDetails = () => {
                 if(error.response){
                     if(error.response.status === 401 || error.response.status === 403 ) {
  
-                        dispatcher({type: LOGOUT })
+                        dispatcher({type: LOGOUT });
                     }
                 }
                 console.error('Failed to fetch positions:', error);
@@ -104,8 +104,8 @@ const PositionDetails = () => {
 
         intervalId.current = setInterval(() => {
 
-            console.log("Checking job status...")
-            console.log("Job id: " + job.jobId)
+            console.log('Checking job status...');
+            console.log('Job id: ' + job.jobId);
             if (job.jobId) {
                 
                 axios.get(configData.API_SERVER + 'generation-status/' + job.jobId, {
@@ -115,15 +115,15 @@ const PositionDetails = () => {
                 console.log(data);
     
                 if(data.status === 'Completed'){
-                    console.log("Job completed: " + job.jobId)
-                    console.log("Interval id: " + intervalId.current)
+                    console.log('Job completed: ' + job.jobId);
+                    console.log('Interval id: ' + intervalId.current);
                     clearInterval(intervalId.current);
                     setIsLoading(false);
                     console.log(data.result);
-                    if(job.jobType === "RESUME"){
+                    if(job.jobType === 'RESUME'){
                         downloadFile(configData.API_SERVER + 'download-resume/' + job.jobId);
                     }
-                    else if(job.jobType === "SUMMARY"){
+                    else if(job.jobType === 'SUMMARY'){
                         setDraft(data.result);
                         setPrompt(null);
                     }
@@ -133,11 +133,11 @@ const PositionDetails = () => {
                     if(error.response){
                         if(error.response.status === 401 || error.response.status === 403 ) {
         
-                            dispatcher({type: LOGOUT })
+                            dispatcher({type: LOGOUT });
                         }
                         else if(error.response.status === 404){
-                            console.log("Job " +job.jobId + " not found")
-                            console.log("Interval id: " + intervalId.current)
+                            console.log('Job ' +job.jobId + ' not found');
+                            console.log('Interval id: ' + intervalId.current);
                             clearInterval(intervalId.current);
                             setJob({jobId: null, jobType: null});
                             setIsLoading(false);
@@ -152,10 +152,10 @@ const PositionDetails = () => {
             }
         },5000);
 
-        console.log("Setting interval id: " + intervalId.current)
+        console.log('Setting interval id: ' + intervalId.current);
 
         return () => {
-            console.log("Clearing interval id: " + intervalId.current)
+            console.log('Clearing interval id: ' + intervalId.current);
             clearInterval(intervalId.current);
         };
     }, [account.token, dispatcher, job.jobId]);
@@ -171,16 +171,16 @@ const PositionDetails = () => {
                 headers: { Authorization: `${account.token}` }, 
             });
             const data = response.data;
-            console.log("Initiated resume generation... Job id:")
+            console.log('Initiated resume generation... Job id:');
             console.log(data.job_id);
 
-            setJob({jobId: data.job_id, jobType:"RESUME"});
+            setJob({jobId: data.job_id, jobType:'RESUME'});
             
         } catch (error) {
             if(error.response){
                 if(error.response.status === 401 || error.response.status === 403 ) {
 
-                    dispatcher({type: LOGOUT })
+                    dispatcher({type: LOGOUT });
                 }
             }
         }
@@ -196,20 +196,20 @@ const PositionDetails = () => {
                     headers: { Authorization: `${account.token}` }, 
                 });
                 const data = response.data;
-                console.log("Initiated summary generation... Job id:")
+                console.log('Initiated summary generation... Job id:');
                 console.log(data.job_id);
     
-                setJob({jobId: data.job_id, jobType:"SUMMARY"});
+                setJob({jobId: data.job_id, jobType:'SUMMARY'});
             } catch (error) {
                 if(error.response){
                     if(error.response.status === 401 || error.response.status === 403 ) {
     
-                        dispatcher({type: LOGOUT })
+                        dispatcher({type: LOGOUT });
                     }
                 }
                 setIsLoading(false);
             }
-        }
+        };
 
     return (
         <MainCard title="Position management">
@@ -242,7 +242,7 @@ const PositionDetails = () => {
                         <TextField
                                 fullWidth
                                 multiline
-                                value={draft || "Professional summary will appear here."}
+                                value={draft || 'Professional summary will appear here.'}
                                 InputProps={{
                                 readOnly: true,
                                 }}
@@ -281,6 +281,6 @@ const PositionDetails = () => {
             )}
         </MainCard>
     );
-}
+};
 
 export default PositionDetails;

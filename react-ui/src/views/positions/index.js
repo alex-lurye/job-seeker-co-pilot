@@ -36,8 +36,8 @@ const Positions = () => {
     const [open, setOpen] = useState(false);
     const [formSubmitted,setFormSubmitted] = useState(false);
 
-    const handleOpen = () => { setOpen(true); setFormSubmitted(false);}
-    const handleClose = () => { setOpen(false); setFormSubmitted(true);}
+    const handleOpen = () => { setOpen(true); setFormSubmitted(false);};
+    const handleClose = () => { setOpen(false); setFormSubmitted(true);};
 
     const account = useSelector((state) => state.account);
 
@@ -55,13 +55,13 @@ const Positions = () => {
             if(error.response){
                 if(error.response.status === 401 || error.response.status === 403 ) {
 
-                    dispatcher({type: LOGOUT })
+                    dispatcher({type: LOGOUT });
                 }
             }
             console.error('Failed to delete position:', error);
             // Handle error appropriately
         }
-    }
+    };
 
 
     useEffect(() => {
@@ -77,7 +77,7 @@ const Positions = () => {
                 if(error.response){
                     if(error.response.status === 401 || error.response.status === 403 ) {
  
-                        dispatcher({type: LOGOUT })
+                        dispatcher({type: LOGOUT });
                     }
                 }
                 console.error('Failed to fetch positions:', error);
@@ -132,7 +132,7 @@ const Positions = () => {
             </Box>
 
         </MainCard>
-    )
+    );
 };
 
 export default Positions;

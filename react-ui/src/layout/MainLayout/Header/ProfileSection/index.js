@@ -149,9 +149,9 @@ const ProfileSection = () => {
                     console.log('Error data:', error.response.data);
                     console.log('Error status:', error.response.status);
 
-                    ;
+                    
                 }
-                dispatcher({type: LOGOUT})
+                dispatcher({type: LOGOUT});
             });
     };
     const handleToggle = () => {

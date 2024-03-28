@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     collapseWrapper: {
         position: 'relative',
         '&:after': {
-            content: "''",
+            content: '\'\'',
             position: 'absolute',
             left: '32px',
             top: 0,

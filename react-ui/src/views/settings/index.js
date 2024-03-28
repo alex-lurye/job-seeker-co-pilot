@@ -129,7 +129,7 @@ function Settings() {
                 if(error.response){
                     if(error.response.status === 401 || error.response.status === 403 ) {
  
-                        dispatcher({type: LOGOUT })
+                        dispatcher({type: LOGOUT });
                     }
                 }
                 console.error('Failed to fetch user settings:', error);
@@ -262,7 +262,7 @@ function Settings() {
                     if(error.response){
                         if(error.response.status === 401 || error.response.status === 403 ) {
      
-                            dispatcher({type: LOGOUT })
+                            dispatcher({type: LOGOUT });
                         }
                     }
                 });
@@ -272,7 +272,7 @@ function Settings() {
             setErrorMessage('The operation was not successful. Please try again.');
             setIsSubmitting(false);
         }
-    }
+    };
 
     return (
         <MainCard>
@@ -290,14 +290,14 @@ function Settings() {
                                 label="Company"
                                 fullWidth
                                 value={experience.company}
-                                onChange={(e) => {  handleExperienceChange(index, 'company', e.target.value)}}
+                                onChange={(e) => {  handleExperienceChange(index, 'company', e.target.value);}}
                                 placeholder="Company"
                                 />
                             </Grid>
                             <Grid xs={12} sm={6} md={3}>
                                 <CountrySelector 
                                 value={experience.country_iso2}
-                                onChange={(e) => { console.log(e); handleExperienceCountryChange(index, e.value)}}
+                                onChange={(e) => { console.log(e); handleExperienceCountryChange(index, e.value);}}
                                 placeholder="Select a country..."
                                 />
                             </Grid>
@@ -374,7 +374,7 @@ function Settings() {
                                 <Grid xs={12} sm={6} md={3}>
                                     <CountrySelector 
                                         value={education.country_iso2}
-                                        onChange={(e) => { console.log(e); handleEducationCountryChange(index, e.value)}}
+                                        onChange={(e) => { console.log(e); handleEducationCountryChange(index, e.value);}}
                                         placeholder="Select a country..."
                                     />
                                 </Grid>
