@@ -48,12 +48,16 @@ async def generate_summary(task_id, data):
             {educations_list}
             My skills:
             {skills_list}
-            I'm compiling a resume to apply for the position. 
-            Here is my professional summary:
+            I'm writing a professional summary section for my resume that will be used to apply for the position. 
+            The professional summary should highlight the parts of my experience and skillset that aligns with the position description. 
+            Include only experience in what appears in my qualifications. This text will be a part of resume so it shouldn't include the target position company name.
+            Only include information relevant to the position. Do not include information that can show me as overqualified.
+            Do not output any additional text besides the summary itself.
+            Here is my current professional summary:
             {data.draft}
             Can you improve it following the feedback below?
             {data.prompt}
-            """
+           """
         else:
             initial_prompt = f"""
             I want to apply to the following position:
@@ -67,8 +71,8 @@ async def generate_summary(task_id, data):
             {skills_list}
             I'm compiling a resume to apply for the position. 
             Write for me a one paragraph (three sentences) text that will appear in the first summary section of the resume.
-            The text should align as much as possible with the position description. 
-            Do not invent any qualities or experiences that I don't have. 
+            The professional summary should highlight the parts of my experience and skillset that aligns with the position description. 
+            Include only experience in what appears in my qualifications. This text will be a part of resume so it shouldn't include the target position company name.
             Do not include any irrelevant information. Do not include information that can show me as overqualified.
             """
         
