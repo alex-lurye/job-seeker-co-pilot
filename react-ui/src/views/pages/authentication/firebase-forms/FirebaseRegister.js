@@ -123,6 +123,7 @@ const FirebaseRegister = ({ ...others }) => {
                             size="large"
                             variant="contained"
                         >
+                            {/*eslint-disable-next-line react/no-unknown-property*/}
                             <img src={Google} alt="google" width="20px" sx={{ mr: { xs: 1, sm: 2 } }} className={classes.loginIcon} /> Sign
                             up with Google
                         </Button>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, Box, TextField } from '@mui/material';
 import axios from 'axios';
 import configData from '../../config';
@@ -46,7 +47,7 @@ const AddPositionModal = ({ open, handleClose }) => {
         if(error.response){
             if(error.response.status === 401 || error.response.status === 403 ) {
 
-                dispatcher({type: LOGOUT })
+                dispatcher({type: LOGOUT });
             }
         }
     });
@@ -69,7 +70,7 @@ const AddPositionModal = ({ open, handleClose }) => {
 
   return (
     <div>
-      <Modal open={open} onClose={handleClose} aria-labelledby={"blabla"}>
+      <Modal open={open} onClose={handleClose} aria-labelledby={'blabla'}>
         <Box sx={style}>
           <form onSubmit={handleSubmit}>
             <TextField 
@@ -109,6 +110,11 @@ const AddPositionModal = ({ open, handleClose }) => {
       </Modal>
     </div>
   );
-}
+};
+
+AddPositionModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+};
 
 export default AddPositionModal; 

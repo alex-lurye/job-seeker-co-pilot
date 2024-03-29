@@ -104,4 +104,6 @@ Transitions.defaultProps = {
     direction: 'up'
 };
 
+Transitions.displayName = 'Transitions';
+
 export default Transitions;

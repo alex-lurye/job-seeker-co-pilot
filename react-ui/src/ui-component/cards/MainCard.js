@@ -80,4 +80,6 @@ MainCard.propTypes = {
     title: PropTypes.oneOfType([PropTypes.node, PropTypes.string, PropTypes.object])
 };
 
+MainCard.displayName = 'MainCard';
+
 export default MainCard;
