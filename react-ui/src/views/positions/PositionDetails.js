@@ -1,8 +1,9 @@
+import React from 'react';
 import {useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import configData from '../../config';
-import { LOGOUT } from './../../store/actions';
+import { LOGOUT } from '../../store/actions';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
@@ -30,7 +31,7 @@ const PositionDetails = () => {
 //    const [jobId, setJobId] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 //    const [resume, setResume] = useState(null); 
-    const [summary, setSummary] = useState(null);
+//     const [summary, setSummary] = useState(null);
     const [prompt, setPrompt] = useState(null);
     const [draft, setDraft] = useState(null);
 
@@ -90,9 +91,10 @@ const PositionDetails = () => {
         };
 
         fetchData();
-    }, []); // useEffect dependency array
+    });
 
     var intervalId = useRef(null);
+
     useEffect(() => {
 
         if (!job.jobId) {
@@ -158,6 +160,8 @@ const PositionDetails = () => {
             console.log('Clearing interval id: ' + intervalId.current);
             clearInterval(intervalId.current);
         };
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [account.token, dispatcher, job.jobId]);
 
     

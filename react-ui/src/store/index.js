@@ -6,7 +6,11 @@ import reducer from './reducer';
 
 const store = configureStore({
     reducer: reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: {
+            ignoredActions: ['persist/PERSIST']
+        },
+    }),
     devTools: process.env.NODE_ENV !== 'production',
 });
 

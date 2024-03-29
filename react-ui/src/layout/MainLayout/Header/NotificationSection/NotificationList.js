@@ -194,7 +194,7 @@ const NotificationList = () => {
                 </ListItem>
                 <Grid container direction="column" className={classes.listContainer}>
                     <Grid item xs={12} className={classes.paddingBottom}>
-                        <Typography variant="subtitle2">All done! Now check your inbox as you're in for a sweet treat!</Typography>
+                        <Typography variant="subtitle2">All done! Now check your inbox as you&apos;re in for a sweet treat!</Typography>
                     </Grid>
                     <Grid item xs={12}>
                         <Grid container>

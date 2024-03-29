@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Button, Modal, Box, TextField } from '@mui/material';
 import axios from 'axios';
 import configData from '../../config';
@@ -109,6 +110,11 @@ const AddPositionModal = ({ open, handleClose }) => {
       </Modal>
     </div>
   );
+};
+
+AddPositionModal.propTypes = {
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default AddPositionModal; 

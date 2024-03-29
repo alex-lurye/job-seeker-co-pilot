@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
 // project imports
@@ -80,6 +81,11 @@ const CountrySelector = ({ onChange, value }) => (
     </Box>
 );
 
+CountrySelector.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired,
+};
+
 function Settings() {
     // State for each category
     const [experiences, setExperiences] = useState([{
@@ -100,7 +106,7 @@ function Settings() {
       additional_info: '',
     }]);
     const account = useSelector((state) => state.account);
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [, setIsSubmitting] = useState(false);
     const [submissionSuccess, setSubmissionSuccess] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
   
@@ -138,6 +144,8 @@ function Settings() {
         };
 
         fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatcher]); // useEffect dependency array
 
     // Handle change for experiences
@@ -197,15 +205,17 @@ function Settings() {
 
     const handleSkillChange = (e) => setSkill(e.target.value);
 
-    const handleCertificationChange = (index, e) => {
-    const newCertifications = certifications.map((certification, cIndex) => {
-        if (index === cIndex) {
-            return { ...certification, [e.target.name]: e.target.value };
-        }
-        return certification;
-        });
-        setCertifications(newCertifications);
-    };
+    // const handleCertificationChange = (index, e) => {
+    //
+    //     const newCertifications = certifications.map((certification, cIndex) => {
+    //         if (index === cIndex) {
+    //             return { ...certification, [e.target.name]: e.target.value };
+    //         }
+    //         return certification;
+    //     });
+    //
+    //     setCertifications(newCertifications);
+    // };
 
     // Handler for changes in experiences
     function handleExperienceCountryChange(experienceIndex, newCountryCode) {

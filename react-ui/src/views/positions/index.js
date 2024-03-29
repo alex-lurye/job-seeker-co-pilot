@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import React from 'react';
 
 // material-ui
-import { useTheme } from '@material-ui/styles';
-import { Box, Card, Grid, Typography } from '@material-ui/core';
+// import { useTheme } from '@material-ui/styles';
+import { Box, Typography } from '@material-ui/core';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -34,7 +34,7 @@ const Positions = () => {
 
 
     const [open, setOpen] = useState(false);
-    const [formSubmitted,setFormSubmitted] = useState(false);
+    const [,setFormSubmitted] = useState(false);
 
     const handleOpen = () => { setOpen(true); setFormSubmitted(false);};
     const handleClose = () => { setOpen(false); setFormSubmitted(true);};
@@ -68,7 +68,7 @@ const Positions = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(configData.API_SERVER + 'positions', {
-                    headers: { Authorization: `${account.token}` }, // Assuming you need to authorize
+                    headers: { Authorization: `${account.token}` },
                 });
                 const data = response.data;
                 console.log(data);
@@ -81,12 +81,11 @@ const Positions = () => {
                     }
                 }
                 console.error('Failed to fetch positions:', error);
-                // Handle error appropriately
             }
         };
 
         fetchData();
-    }, []); // useEffect dependency array
+    });
 
 
     return (

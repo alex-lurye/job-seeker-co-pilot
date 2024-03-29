@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -300,6 +301,10 @@ const FirebaseLogin = (props, { ...others }) => {
             </Formik>
         </React.Fragment>
     );
+};
+
+FirebaseLogin.propTypes = {
+    login: PropTypes.string
 };
 
 export default FirebaseLogin;

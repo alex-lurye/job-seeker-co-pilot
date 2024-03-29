@@ -31,7 +31,7 @@ import axios from 'axios';
 // project imports
 import MainCard from '../../../../ui-component/cards/MainCard';
 import Transitions from '../../../../ui-component/extended/Transitions';
-import UpgradePlanCard from './UpgradePlanCard';
+// import UpgradePlanCard from './UpgradePlanCard';
 import { LOGOUT } from './../../../../store/actions';
 
 // assets
@@ -127,7 +127,7 @@ const ProfileSection = () => {
     const [sdm, setSdm] = React.useState(true);
     const [value, setValue] = React.useState('');
     const [notification, setNotification] = React.useState(false);
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
+    const [selectedIndex] = React.useState(1);
 
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);

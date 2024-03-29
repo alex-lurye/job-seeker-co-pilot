@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -260,6 +261,10 @@ const RestLogin = (props, { ...others }) => {
             </Formik>
         </React.Fragment>
     );
+};
+
+RestLogin.propTypes = {
+    login: PropTypes.string
 };
 
 export default RestLogin;
