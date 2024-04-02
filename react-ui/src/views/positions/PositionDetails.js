@@ -246,9 +246,9 @@ const PositionDetails = () => {
                         <TextField
                                 fullWidth
                                 multilin
-		    		                    label="Professional summary"
+                                label="Professional summary"
                                 value={draft}
-				                        onChange={(e) => setDraft(e.target.value)}
+                                onChange={(e) => setDraft(e.target.value)}
                                 variant="outlined"
                                 sx={{
                                 '& .MuiInputBase-inputMultiline': {

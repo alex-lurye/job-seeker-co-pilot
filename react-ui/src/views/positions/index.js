@@ -63,7 +63,7 @@ const Positions = () => {
         }
     };
 
-
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -85,7 +85,8 @@ const Positions = () => {
         };
 
         fetchData();
-    });
+
+    }, []);
 
 
     return (
