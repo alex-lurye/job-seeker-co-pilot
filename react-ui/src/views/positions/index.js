@@ -24,7 +24,6 @@ import { Link } from 'react-router-dom';
 
 const Positions = () => {
     const [positions, setPositions] = useState([{
-
         id:'',
         company:'',
         title:'',
@@ -61,6 +60,11 @@ const Positions = () => {
             console.error('Failed to delete position:', error);
             // Handle error appropriately
         }
+    };
+
+    const addPosition = (newPosition) => {
+        setPositions(prevPositions => [...prevPositions, newPosition]);
+        handleClose();
     };
 
     /* eslint-disable react-hooks/exhaustive-deps */
@@ -128,7 +132,7 @@ const Positions = () => {
                 <Button variant="contained" onClick={handleOpen}>
                     Add New Position
                 </Button>
-                <AddPositionModal open={open} handleClose={handleClose} />
+                <AddPositionModal open={open} handleSubmit={addPosition} handleClose={handleClose} />
             </Box>
 
         </MainCard>

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LOGOUT } from './../../store/actions';
 
 
-const AddPositionModal = ({ open, handleClose }) => {
+const AddPositionModal = ({ open, handleClose, handleSubmit }) => {
 
   const [company, setCompany] = useState('');
   const [title, setTitle] = useState('');
@@ -20,7 +20,7 @@ const AddPositionModal = ({ open, handleClose }) => {
 
   const dispatcher = useDispatch();
 
-  const handleSubmit = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault(); 
     setSubmissionSuccess(null);
     setErrorMessage('');
@@ -31,15 +31,7 @@ const AddPositionModal = ({ open, handleClose }) => {
         { headers: { Authorization: `${account.token}` }}
         )
     .then(function (response) {
-
-        if (response.data.success) {
-            console.log(response.data);
-            setSubmissionSuccess(true);
-        } else {
-            setSubmissionSuccess(false);
-            setErrorMessage('The operation was not successful. Please try again.');
-        }
-        handleClose(); // Close the modal after submission
+        handleSubmit(response.data);
     })
     .catch(function (error) {
         setSubmissionSuccess(false);
@@ -72,7 +64,7 @@ const AddPositionModal = ({ open, handleClose }) => {
     <div>
       <Modal open={open} onClose={handleClose} aria-labelledby={'blabla'}>
         <Box sx={style}>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={onSubmit}>
             <TextField 
               margin="normal" 
               required 
@@ -115,6 +107,7 @@ const AddPositionModal = ({ open, handleClose }) => {
 AddPositionModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 export default AddPositionModal; 
