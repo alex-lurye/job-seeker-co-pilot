@@ -24,7 +24,6 @@ import { Link } from 'react-router-dom';
 
 const Positions = () => {
     const [positions, setPositions] = useState([{
-
         id:'',
         company:'',
         title:'',
@@ -63,7 +62,12 @@ const Positions = () => {
         }
     };
 
+    const addPosition = (newPosition) => {
+        setPositions(prevPositions => [...prevPositions, newPosition]);
+        handleClose();
+    };
 
+    /* eslint-disable react-hooks/exhaustive-deps */
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -85,7 +89,8 @@ const Positions = () => {
         };
 
         fetchData();
-    });
+
+    }, []);
 
 
     return (
@@ -127,7 +132,7 @@ const Positions = () => {
                 <Button variant="contained" onClick={handleOpen}>
                     Add New Position
                 </Button>
-                <AddPositionModal open={open} handleClose={handleClose} />
+                <AddPositionModal open={open} handleSubmit={addPosition} handleClose={handleClose} />
             </Box>
 
         </MainCard>

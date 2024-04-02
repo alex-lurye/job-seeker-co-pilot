@@ -312,8 +312,10 @@ class PositionsSaver(Resource):
 
         self.save()
 
-        return {"success": True,
-                }, 200
+        return new_position.to_dict(), 201
+
+#         return {"success": True,
+#                 }, 200
     
     @token_required
     def get(self, dumb): 
