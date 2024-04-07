@@ -11,7 +11,7 @@ import MainCard from '../../ui-component/cards/MainCard';
 import SubCard from '../../ui-component/cards/SubCard'; // Import the SubCard component
 import { Button } from '@material-ui/core';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline'; // Import the AddCircleOutlineIcon component
-import { Box } from '@material-ui/core'; 
+import { Box } from '@material-ui/core';
 import  TextField  from '@material-ui/core/TextField';
 import { useRef } from 'react';
 
@@ -241,7 +241,7 @@ const PositionDetails = () => {
                         </Box>
                         <p style={{ fontSize: 'small', textAlign: 'right' }}>{position.date}</p>
                     </SubCard>
-                    <SubCard title="Submission helper">
+                    <SubCard title="Submission helper" style={{ marginTop: '1rem' }}>
                         
                         <TextField
                                 fullWidth
@@ -257,26 +257,33 @@ const PositionDetails = () => {
                                 },
                                 }}
                             />
-                        <Box display="flex" justifyContent="center" gap="16px" p={1}>
-                            <TextField 
-                                margin="normal"
-                                fullWidth 
-                                label="Feedback prompt" 
-                                value={prompt}
-                                onChange={(e) => setPrompt(e.target.value)}
+                        <Box display="flex" justifyContent="center" gap="16px">
+                            <TextField
+                              fullWidth
+                              margin="normal"
+                              label="Feedback prompt"
+                              value={prompt}
+                              onChange={(e) => setPrompt(e.target.value)}
                             />
                             <Button
-                                startIcon={<AddCircleOutlineIcon />}
-                                onClick={generateSummary}
-                                variant="contained"
-                            >Generate Professional Summary</Button>
+                              startIcon={<AddCircleOutlineIcon />}
+                              onClick={generateSummary}
+                              variant="contained"
+                              size="large"
+                              style={{ minWidth: '18.25rem', margin: 'auto' }}
+                            >
+                                Generate Professional Summary
+                            </Button>
                         </Box>
                         <Box display="flex" justifyContent="center" gap="16px" p={1}>
                             <Button
                                 startIcon={<AddCircleOutlineIcon />}
                                 onClick={generateResume}
                                 variant="contained"
-                            >Generate Resume</Button>
+                                size="large"
+                            >
+                                Generate Resume
+                            </Button>
                             {isLoading && <p>Loading...</p>}
                         </Box>
                     </SubCard>
