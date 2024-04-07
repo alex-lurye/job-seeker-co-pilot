@@ -32,8 +32,8 @@ const PositionDetails = () => {
     const [isLoading, setIsLoading] = useState(false);
 //    const [resume, setResume] = useState(null); 
 //     const [summary, setSummary] = useState(null);
-    const [prompt, setPrompt] = useState(null);
-    const [draft, setDraft] = useState(null);
+    const [prompt, setPrompt] = useState('');
+    const [draft, setDraft] = useState('');
 
     let { id } = useParams();
 
@@ -91,7 +91,7 @@ const PositionDetails = () => {
         };
 
         fetchData();
-    });
+    }, []);
 
     var intervalId = useRef(null);
 

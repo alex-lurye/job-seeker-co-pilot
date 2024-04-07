@@ -33,7 +33,6 @@ const MainRoutes = () => {
         <Route
             path={[
                 '/dashboard/default',
-
                 '/utils/util-typography',
                 '/utils/util-color',
                 '/utils/util-shadow',
@@ -54,8 +53,8 @@ const MainRoutes = () => {
                         <Route path="/utils/util-shadow" component={UtilsShadow} />
                         <Route path="/icons/tabler-icons" component={UtilsTablerIcons} />
                         <Route path="/icons/material-icons" component={UtilsMaterialIcons} />
-                        <Route path="/positions/:id" component={PositionDetails} />
-                        <Route path="/positions" component={Positions} />
+                        <Route exact path="/positions/:id" component={PositionDetails} />
+                        <Route exact path="/positions" component={Positions} />
                         <Route path="/settings" component={Settings} />
                     </AuthGuard>
                 </Switch>

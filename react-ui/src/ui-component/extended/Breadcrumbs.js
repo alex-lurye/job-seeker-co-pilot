@@ -83,7 +83,7 @@ const Breadcrumbs = ({ card, divider, icon, icons, maxItems, navigation, rightAl
             }
             return false;
         });
-    });
+    }, []);
 
     // set active item state
     const getCollapse = (item) => {
