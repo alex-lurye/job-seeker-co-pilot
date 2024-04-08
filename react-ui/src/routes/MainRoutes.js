@@ -21,7 +21,8 @@ const PositionDetails = Loadable(lazy(() => import('../views/positions/PositionD
 const Positions = Loadable(lazy(() => import('../views/positions')));
 
 // settings routing
-const Settings = Loadable(lazy(() => import('../views/settings')));
+// const Settings = Loadable(lazy(() => import('../views/settings')));
+const Resume = Loadable(lazy(() => import('../views/resume')));
 
 
 //-----------------------|| MAIN ROUTING ||-----------------------//
@@ -40,7 +41,7 @@ const MainRoutes = () => {
                 '/icons/material-icons',
                 '/positions/:id',
                 '/positions',
-                '/settings'
+                '/resume'
             ]}
         >
             <MainLayout>
@@ -55,7 +56,7 @@ const MainRoutes = () => {
                         <Route path="/icons/material-icons" component={UtilsMaterialIcons} />
                         <Route exact path="/positions/:id" component={PositionDetails} />
                         <Route exact path="/positions" component={Positions} />
-                        <Route path="/settings" component={Settings} />
+                        <Route path="/resume" component={Resume} />
                     </AuthGuard>
                 </Switch>
             </MainLayout>

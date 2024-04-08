@@ -24,10 +24,10 @@ export const other = {
             breadcrumbs: false
         },
         {
-            id: 'settings',
-            title: 'Settings',
+            id: 'resume',
+            title: 'Resume',
             type: 'item',
-            url: '/settings',
+            url: '/resume',
             icon: icons['IconSettings'],
             breadcrumbs: false
         },
