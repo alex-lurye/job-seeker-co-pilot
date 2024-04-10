@@ -20,14 +20,15 @@ const KeyWords = ({
 
   return (
     <>
-      {list.map(({ id, alias, ...props }) => (
+      {list.map(({ id, alias, ...props }, index) => (
         <ChipComponent
           color="primary"
           key={id}
           className={classes.keyWord}
           label={alias}
-          onClick={() => onClick(list[id])}
-          onDelete={() => onRemove(list[id])}
+          onClick={() => onClick(list[index])}
+          onDelete={() => onRemove(list[index])
+        }
           {...props}
         />
       ))}

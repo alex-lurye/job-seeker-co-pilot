@@ -1,10 +1,12 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
 // reducer import
 import customizationReducer from './customizationReducer';
 import accountReducer from './accountReducer';
+
+import resumeSlice from '../views/resume/store/ResumeSlice';
 
 //-----------------------|| COMBINE REDUCER ||-----------------------//
 
@@ -17,7 +19,8 @@ const reducer = combineReducers({
         },
         accountReducer
     ),
-    customization: customizationReducer
+    customization: customizationReducer,
+    resume: resumeSlice
 });
 
 export default reducer;

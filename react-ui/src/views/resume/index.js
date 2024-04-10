@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import SubCard from '../../ui-component/cards/SubCard';
 import ConfirmModal from '../../ui-component/confirmModal';
@@ -8,6 +9,30 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
+import { fetchKeyWords, fetchResume, addKeyWord, removeKeyWord } from './store/ResumeActions';
+import { getKeyWords } from './store/ResumeSelector';
+import CircularProgress from '@mui/material/CircularProgress';
+import { makeStyles } from '@material-ui/styles';
+
+
+const useStyles = makeStyles(() => ({
+  keyWordsLoadingContainer: {
+    margin: '1rem',
+    textAlign: 'center'
+  },
+  keyWordsBlock: {
+    marginTop: '1rem'
+  },
+  keyWordsControllerContainer: {
+    display: 'flex',
+    marginBottom: '1rem'
+  },
+  keyWordsAddedButton: {
+    minWidth: '10rem',
+    marginLeft: '1rem'
+  }
+}));
+
 const config = {
   confirm: {
     title: 'This will replace the current keywords that already exist in&nbsp;the Keyword section below',
@@ -16,69 +41,21 @@ const config = {
   }
 };
 
-const mock = {
-  keyWords: [
-    {
-      id: '1',
-      name: 'React',
-      alias: 'react',
-    },
-    {
-      id: '2',
-      name: 'JavaScript',
-      alias: 'javascript',
-    },
-    {
-      id: '3',
-      name: 'HTML',
-      alias: 'html',
-    },
-    {
-      id: '4',
-      name: 'CSS',
-      alias: 'css',
-    },
-    {
-      id: '5',
-      name: 'TypeScript',
-      alias: 'typescript',
-    },
-    {
-      id: '6',
-      name: 'Redux',
-      alias: 'redux',
-    },
-    {
-      id: '7',
-      name: 'Vue.js',
-      alias: 'vuejs',
-    },
-    {
-      id: '8',
-      name: 'Angular',
-      alias: 'angular',
-    },
-    {
-      id: '9',
-      name: 'Webpack',
-      alias: 'webpack',
-    },
-    {
-      id: '10',
-      name: 'Babel',
-      alias: 'babel',
-    },
-  ]
-};
-
 function Resume() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const { data: dataKeyWords, loading: loadingKeywords } = useSelector(getKeyWords);
+
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [resumeDescription, setResumeDescription] = useState('');
-
-  const getKeyWords = mock.keyWords;
+  const [keyWordInput, setKeyWordInput] = useState('');
 
   const handleChangeResumeDescription = (event) => {
     setResumeDescription(event.target.value);
+  };
+
+  const handleChangeKeyWordInput = (event) => {
+    setKeyWordInput(event.target.value);
   };
 
   const handleShowConfirmModal = () => {
@@ -89,9 +66,23 @@ function Resume() {
     setShowConfirmModal(false);
   };
 
+  const handleAddedKeyWord = (keyWord) => {
+    dispatch(addKeyWord(keyWord));
+    setKeyWordInput('');
+  };
+
+  const handleRemoveKeyWord = (keyWord) => {
+    dispatch(removeKeyWord(keyWord));
+  };
+
   const generateTags = () => {
     handleHideConfirmModal();
   };
+
+  useEffect(() => {
+    dispatch(fetchKeyWords());
+    dispatch(fetchResume());
+  }, []);
 
   return (
     <BaseLayout title="Resume">
@@ -119,13 +110,28 @@ function Resume() {
                   </Grid>
                 </Grid>
               </SubCard>
-              { getKeyWords.length ? <SubCard style={{ marginTop: '1rem' }}>
-                <KeyWords
-                  list={getKeyWords}
+
+              <SubCard className={classes.keyWordsBlock}>
+                <div className={classes.keyWordsControllerContainer}>
+                  <TextField
+                    name="Skills"
+                    variant="outlined"
+                    fullWidth
+                    value={keyWordInput}
+                    onChange={handleChangeKeyWordInput}
+                    placeholder="Added some skills"
+                  />
+                  <Button className={classes.keyWordsAddedButton} onClick={() => handleAddedKeyWord(keyWordInput)} variant="contained">Added keyword</Button>
+                </div>
+                { loadingKeywords ? <div className={classes.keyWordsLoadingContainer}>
+                  <CircularProgress/>
+                </div> : '' }
+                { dataKeyWords?.length ? <KeyWords
+                  list={dataKeyWords}
                   onClick={(keyWord) => console.log('keyWord', keyWord)}
-                  onRemove={(keyWord) => console.log('remove keyWord', keyWord)}
-                />
-              </SubCard> : '' }
+                  onRemove={(keyWord) => handleRemoveKeyWord(keyWord)}
+                /> : '' }
+              </SubCard>
             </Grid>
           </Grid>
         <ConfirmModal
