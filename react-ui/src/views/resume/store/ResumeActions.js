@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import {
   fetchResume as fetchResumeApi,
+  updateResume as updateResumeApi,
   fetchKeyWords as fetchKeyWordsApi,
   addKeyWord as addKeyWordApi,
   removeKeyWord as removeKeyWordApi
@@ -12,6 +13,17 @@ const fetchResume = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       return await fetchResumeApi();
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+
+const updateResume = createAsyncThunk(
+  'resume/updateResume',
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await updateResumeApi(payload);
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -52,4 +64,4 @@ const removeKeyWord = createAsyncThunk(
   }
 );
 
-export { fetchResume, fetchKeyWords, addKeyWord, removeKeyWord };
+export { fetchResume, updateResume, fetchKeyWords, addKeyWord, removeKeyWord };

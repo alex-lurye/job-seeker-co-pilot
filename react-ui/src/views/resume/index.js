@@ -9,16 +9,24 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 
-import { fetchKeyWords, fetchResume, addKeyWord, removeKeyWord } from './store/ResumeActions';
+import { fetchKeyWords, updateResume, fetchResume, addKeyWord, removeKeyWord } from './store/ResumeActions';
 import { getKeyWords } from './store/ResumeSelector';
 import CircularProgress from '@mui/material/CircularProgress';
 import { makeStyles } from '@material-ui/styles';
 
 
 const useStyles = makeStyles(() => ({
+  keyWordsContainer: {
+    position: 'relative',
+    minHeight: '3rem',
+  },
   keyWordsLoadingContainer: {
-    margin: '1rem',
-    textAlign: 'center'
+    textAlign: 'center',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)'
   },
   keyWordsBlock: {
     marginTop: '1rem'
@@ -75,7 +83,8 @@ function Resume() {
     dispatch(removeKeyWord(keyWord));
   };
 
-  const generateTags = () => {
+  const generateTags = (resumeData) => {
+    dispatch(updateResume(resumeData));
     handleHideConfirmModal();
   };
 
@@ -123,14 +132,17 @@ function Resume() {
                   />
                   <Button className={classes.keyWordsAddedButton} onClick={() => handleAddedKeyWord(keyWordInput)} variant="contained">Added keyword</Button>
                 </div>
-                { loadingKeywords ? <div className={classes.keyWordsLoadingContainer}>
-                  <CircularProgress/>
-                </div> : '' }
-                { dataKeyWords?.length ? <KeyWords
-                  list={dataKeyWords}
-                  onClick={(keyWord) => console.log('keyWord', keyWord)}
-                  onRemove={(keyWord) => handleRemoveKeyWord(keyWord)}
-                /> : '' }
+                {/*loadingKeywords*/}
+                <div className={classes.keyWordsContainer}>
+                  { loadingKeywords ? <div className={classes.keyWordsLoadingContainer}>
+                    <CircularProgress/>
+                  </div> : '' }
+                    { dataKeyWords?.length ? <KeyWords
+                      list={dataKeyWords}
+                      onClick={(keyWord) => console.log('keyWord', keyWord)}
+                      onRemove={(keyWord) => handleRemoveKeyWord(keyWord)}
+                    /> : '' }
+                </div>
               </SubCard>
             </Grid>
           </Grid>
@@ -140,7 +152,7 @@ function Resume() {
           submitText={config.confirm.submitText}
           open={showConfirmModal}
           onCancel={handleHideConfirmModal}
-          onSubmit={generateTags}
+          onSubmit={() => generateTags(resumeDescription)}
         />
       </>
     </BaseLayout>

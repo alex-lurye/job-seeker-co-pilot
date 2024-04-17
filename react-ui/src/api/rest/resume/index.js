@@ -1,3 +1,4 @@
+//TODO remove mock data and api
 
 import { mockApi } from '../../../utils/mockApi';
 
@@ -58,8 +59,15 @@ const mockData = {
 };
 
 const fetchResume = () => mockApi(true, mockData.resume).then((r) => r);
-const fetchKeyWords = () => mockApi(true, mockData.keyWords).then((r) => r);
+const updateResume = (data) => mockApi(true, data).then(() => {
+ return {
+   resume: data,
+   keyWords: mockData.keyWords
+ };
+});
+const fetchKeyWords = () => mockApi(true, [mockData.keyWords[0]]).then((r) => r);
 const addKeyWord = (data) => mockApi(true, data).then((r) => {
+  // For test
   return {
     id: new Date().toTimeString(),
     name: r,
@@ -70,6 +78,7 @@ const removeKeyWord = (data) => mockApi(true, data).then((r) => r);
 
 export {
   fetchResume,
+  updateResume,
   fetchKeyWords,
   addKeyWord,
   removeKeyWord

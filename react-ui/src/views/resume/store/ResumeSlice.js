@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchResume, fetchKeyWords, addKeyWord, removeKeyWord } from './ResumeActions';
+import { fetchResume, updateResume, fetchKeyWords, addKeyWord, removeKeyWord } from './ResumeActions';
 
 const ResumeSlice = createSlice({
   name: 'Resume',
@@ -31,6 +31,25 @@ const ResumeSlice = createSlice({
         state.resume.loading = false;
         state.resume.error = action.error.message;
       })
+
+
+      .addCase(updateResume.pending, (state) => {
+        state.resume.loading = true;
+        state.keyWords.loading = true;
+        state.resume.error = null;
+      })
+      .addCase(updateResume.fulfilled, (state, action) => {
+        state.resume.loading = false;
+        state.keyWords.loading = false;
+        state.resume.data = action.payload.resume;
+        state.keyWords.data = action.payload.keyWords;
+      })
+      .addCase(updateResume.rejected, (state, action) => {
+        state.resume.loading = false;
+        state.keyWords.loading = false;
+        state.resume.error = action.error.message;
+      })
+
       .addCase(fetchKeyWords.pending, (state) => {
         state.keyWords.loading = true;
         state.keyWords.error = null;
